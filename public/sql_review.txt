@@ -1,0 +1,14 @@
+/*--user=inception;--password=inception;--host=192.168.0.249;--enable-execute;--port=3306;--disable-remote-backup;*/
+inception_magic_start;
+set names utf8mb4;
+use test;
+CREATE TABLE `res_trd_partner` (
+  `partnerid` char(12) NOT NULL COMMENT '第三方唯一标识',
+  `cnname` varchar(200) NOT NULL COMMENT '第三方名称',
+  `enname` varchar(200) DEFAULT NULL COMMENT '英文名称',
+  `cpid` int(11) NOT NULL COMMENT '内容提供商id',
+  `intro` varchar(200) DEFAULT NULL COMMENT '描述',
+  `createtime` datetime NOT NULL COMMENT '创建时间',
+  PRIMARY KEY (`partnerid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+inception_magic_commit;
