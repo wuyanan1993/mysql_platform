@@ -547,7 +547,23 @@
                 <h1><i class='fa fa-file'></i> Blank</h1>
                 <h3>Blank Page</h3>
             </div>
-                
+            <table border="1">
+                <tr>
+                    {% for item in field_names %}
+                        <td>{{ item }}</td>
+                    {% endfor %}
+                </tr>
+                {% for res in result %}
+                    <tr>
+                        {% for foo in res %}
+                            <td>{{ foo }}</td>
+                        {% endfor %}
+
+                    </tr>
+                {% endfor %}
+
+
+            </table>
             <!-- Page Heading End-->
 
             <div class="col-md-12 portlets">
@@ -570,7 +586,7 @@
     </div>
     <!-- End right content -->
 
-</div>
+
 <!-- End of page -->
 <!-- the overlay modal element -->
 <div class="md-overlay"></div>
