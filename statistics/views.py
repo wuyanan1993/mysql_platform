@@ -86,11 +86,12 @@ def get_info(request):
 
 
 def test(request):
+    # TODO: 使用原生语句来获取数据库meta信息
     try:
-        conn = MySQLdb.connect(host='192.168.0.249', user='root', passwd='mysql*()', db='', port=3306,
+        conn = MySQLdb.connect(host='192.168.0.249', user='root', passwd='mysql*()', db='mysql', port=3306,
                                client_flag=MULTI_STATEMENTS | MULTI_RESULTS)
         cur = conn.cursor()
-        ret = cur.execute("SELECT user,host FROM mysql.user")
+        ret = cur.execute("SELECT user,host FROM user")
         result = cur.fetchall()
         cur.close()
         conn.close()
