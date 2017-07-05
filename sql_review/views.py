@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import json
-import os
 import MySQLdb
 from MySQLdb.constants.CLIENT import MULTI_STATEMENTS, MULTI_RESULTS
 from django.http.response import HttpResponse
