@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <title>{% block title %}Voole Tech DB Platform{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="description" content="">
+    <meta name="keywords" content="coco bootstrap template, coco admin, bootstrap,admin template, bootstrap admin,">
+    <meta name="author" content="Huban Creative">
+
+    <!-- Base Css Files -->
+    <link href="{% static 'assets/libs/jqueryui/ui-lightness/jquery-ui-1.10.4.custom.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/libs/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/libs/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/libs/fontello/css/fontello.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/libs/animate-css/animate.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/libs/nifty-modal/css/component.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/libs/magnific-popup/magnific-popup.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/libs/ios7-switch/ios7-switch.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/libs/pace/pace.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/libs/sortable/sortable-theme-bootstrap.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/libs/bootstrap-datepicker/css/datepicker.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/libs/jquery-icheck/skins/all.css' %}" rel="stylesheet"/>
+    <!-- Code Highlighter for Demo -->
+    <link href="{% static 'assets/libs/prettify/github.css' %}" rel="stylesheet"/>
+
+    <!-- Extra CSS Libraries Start -->
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet" type="text/css"/>
+    <!-- Extra CSS Libraries End -->
+    <link href="{% static 'assets/css/style-responsive.css' %}" rel="stylesheet"/>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+    <link rel="shortcut icon" href="{% static 'assets/img/favicon.ico' %}">
+    <link rel="apple-touch-icon" href="{% static 'assets/img/apple-touch-icon.png' %}"/>
+    <link rel="apple-touch-icon" sizes="57x57" href="{% static 'assets/img/apple-touch-icon-57x57.png' %}"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="{% static 'assets/img/apple-touch-icon-72x72.png' %}"/>
+    <link rel="apple-touch-icon" sizes="76x76" href="{% static 'assets/img/apple-touch-icon-76x76.png' %}"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="{% static 'assets/img/apple-touch-icon-114x114.png' %}"/>
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'assets/img/apple-touch-icon-120x120.png' %}"/>
+    <link rel="apple-touch-icon" sizes="144x144" href="{% static 'assets/img/apple-touch-icon-144x144.png' %}"/>
+    <link rel="apple-touch-icon" sizes="152x152" href="{% static 'assets/img/apple-touch-icon-152x152.png' %}"/>
+    {% block extra_static_files %}{% endblock %}
+</head>
+<body class="fixed-left">
+<!-- Modal Start -->
+<!-- Modal Task Progress -->
+
+
+<!-- Modal Logout -->
+<div class="md-modal md-just-me" id="logout-modal">
+    <div class="md-content">
+        <h3><strong>Logout</strong> Confirmation</h3>
+        <div>
+            <p class="text-center">Are you sure want to logout from this awesome system?</p>
+            <p class="text-center">
+                <button class="btn btn-danger md-close">Nope!</button>
+                <a href="login.html" class="btn btn-success md-close">Yeah, I'm sure</a>
+            </p>
+        </div>
+    </div>
+</div>        <!-- Modal End -->
+<!-- Begin page -->
+<div id="wrapper">
+
+    <!-- Top Bar Start -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <div class="logo" style="padding: 12px 20px;color: white;">
+                Voole DB Platform
+            </div>
+            <button class="button-menu-mobile open-left">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        <!-- Button mobile view to collapse sidebar menu -->
+        <div class="navbar navbar-default" role="navigation">
+            <div class="container">
+                <div class="navbar-collapse2">
+
+                    <ul class="nav navbar-nav navbar-right top-navbar">
+                        <li class="dropdown iconify hide-phone">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-globe"></i><span
+                                    class="label label-danger absolute">4</span></a>
+                            <ul class="dropdown-menu dropdown-message">
+                                <li class="dropdown-header notif-header"><i class="icon-bell-2"></i> New Notifications<a
+                                        class="pull-right" href="#"><i class="fa fa-cog"></i></a></li>
+                                <li class="unread">
+                                    <a href="#">
+                                        <p><strong>John Doe</strong> Uploaded a photo
+                                            <strong>&#34;DSC000254.jpg&#34;</strong>
+                                            <br/><i>2 minutes ago</i>
+                                        </p>
+                                    </a>
+                                </li>
+                                <li class="unread">
+                                    <a href="#">
+                                        <p><strong>John Doe</strong> Created an photo album
+                                            <strong>&#34;Fappening&#34;</strong>
+                                            <br/><i>8 minutes ago</i>
+                                        </p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <p><strong>John Malkovich</strong> Added 3 products
+                                            <br/><i>3 hours ago</i>
+                                        </p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <p><strong>Sonata Arctica</strong> Send you a message <strong>&#34;Lorem ipsum
+                                            dolor...&#34;</strong>
+                                            <br/><i>12 hours ago</i>
+                                        </p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <p><strong>Johnny Depp</strong> Updated his avatar
+                                            <br/><i>Yesterday</i>
+                                        </p>
+                                    </a>
+                                </li>
+                                <li class="dropdown-footer">
+                                    <div class="btn-group btn-group-justified">
+                                        <div class="btn-group">
+                                            <a href="#" class="btn btn-sm btn-primary"><i class="icon-ccw-1"></i>
+                                                Refresh</a>
+                                        </div>
+                                        <div class="btn-group">
+                                            <a href="#" class="btn btn-sm btn-danger"><i class="icon-trash-3"></i> Clear
+                                                All</a>
+                                        </div>
+                                        <div class="btn-group">
+                                            <a href="#" class="btn btn-sm btn-success">See All <i
+                                                    class="icon-right-open-2"></i></a>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown iconify hide-phone">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
+                                    class="fa fa-envelope"></i><span class="label label-danger absolute">3</span></a>
+                            <ul class="dropdown-menu dropdown-message">
+                                <li class="dropdown-header notif-header"><i class="icon-mail-2"></i> New Messages</li>
+                                <li class="unread">
+                                    <a href="#" class="clearfix">
+                                        <img src="{% static 'images/users/chat/2.jpg' %}" class="xs-avatar ava-dropdown"
+                                             alt="Avatar">
+                                        <strong>John Doe</strong><i class="pull-right msg-time">5 minutes ago</i><br/>
+                                        <p>Duis autem vel eum iriure dolor in hendrerit ...</p>
+                                    </a>
+                                </li>
+                                <li class="unread">
+                                    <a href="#" class="clearfix">
+                                        <img src="{% static 'images/users/chat/1.jpg' %}" class="xs-avatar ava-dropdown"
+                                             alt="Avatar">
+                                        <strong>Sandra Kraken</strong><i class="pull-right msg-time">22 minutes
+                                        ago</i><br/>
+                                        <p>Duis autem vel eum iriure dolor in hendrerit ...</p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="clearfix">
+                                        <img src="{% static 'images/users/chat/3.jpg' %}" class="xs-avatar ava-dropdown"
+                                             alt="Avatar">
+                                        <strong>Zoey Lombardo</strong><i class="pull-right msg-time">41 minutes
+                                        ago</i><br/>
+                                        <p>Duis autem vel eum iriure dolor in hendrerit ...</p>
+                                    </a>
+                                </li>
+                                <li class="dropdown-footer">
+                                    <div class=""><a href="#" class="btn btn-sm btn-block btn-primary"><i
+                                            class="fa fa-share"></i> See all messages</a></div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown iconify hide-phone"><a href="#" onclick="javascript:toggle_fullscreen()"><i
+                                class="icon-resize-full-2"></i></a></li>
+                        <li class="dropdown topbar-profile">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span
+                                    class="rounded-image topbar-profile-image"><img
+                                    src="{% static 'images/users/user-35.jpg' %}"></span> Jane <strong>Doe</strong> <i
+                                    class="fa fa-caret-down"></i></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">My Profile</a></li>
+                                <li><a href="#">Change Password</a></li>
+                                <li><a href="#">Account Setting</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#"><i class="icon-help-2"></i> Help</a></li>
+                                <li><a href="lockscreen.html"><i class="icon-lock-1"></i> Lock me</a></li>
+                                <li><a class="md-trigger" data-modal="logout-modal"><i class="icon-logout-1"></i> Logout</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+    <!-- Top Bar End -->
+
+    <!-- Left Sidebar Start -->
+    <div class="left side-menu">
+        <div class="sidebar-inner slimscrollleft">
+            <!-- Search form -->
+            <form role="search" class="navbar-form">
+                <div class="form-group">
+                    <input type="text" placeholder="Search" class="form-control">
+                    <button type="submit" class="btn search-button"><i class="fa fa-search"></i></button>
+                </div>
+            </form>
+            <div class="clearfix"></div>
+            <!--- Profile -->
+            <div class="profile-info">
+                <div class="col-xs-4">
+                    <a href="profile.html" class="rounded-image profile-image"><img
+                            src="{% static 'images/public/ops.bmp' %}"></a>
+                </div>
+                <div class="col-xs-8">
+                    <div class="profile-text">Welcome <b>Jane</b></div>
+                    <div class="profile-buttons">
+                        <a href="javascript:;"><i class="fa fa-envelope-o pulse"></i></a>
+                        <a href="#connect" class="open-right"><i class="fa fa-comments"></i></a>
+                        <a href="javascript:;" title="Sign Out"><i class="fa fa-power-off text-red-1"></i></a>
+                    </div>
+                </div>
+            </div>
+            <!--- Divider -->
+            <div class="clearfix"></div>
+            <hr class="divider"/>
+            <div class="clearfix"></div>
+            <!--- Divider -->
+            <div id="sidebar-menu">
+                <ul>
+                    <li class='has_sub'>
+                        <a href='javascript:void(0);'>
+                            <i class='icon-home-3'></i>
+                            <span>DB 概览</span>
+                            <span class="pull-right">
+                                <i class="fa fa-angle-down"></i>
+                            </span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a href='index.html'>
+                                    <span>Dashboard v1</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href='index2.html'>
+                                    <span>Dashboard v2</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class='has_sub'>
+                        <a href='javascript:void(0);'>
+                            <i class='icon-home-3'></i>
+                            <span>SQL 审核上线</span>
+                            <span class="pull-right">
+                                <i class="fa fa-angle-down"></i>
+                            </span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a href='index.html'>
+                                    <span>Dashboard v1</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href='index2.html'>
+                                    <span>Dashboard v2</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class='has_sub'>
+                        <a href='javascript:void(0);'>
+                            <i class='icon-home-3'></i>
+                            <span>DB 权限管理</span>
+                            <span class="pull-right">
+                                <i class="fa fa-angle-down"></i>
+                            </span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a href='index.html'>
+                                    <span>Dashboard v1</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href='index2.html'>
+                                    <span>Dashboard v2</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class='has_sub'>
+                        <a href='javascript:void(0);'>
+                            <i class='icon-home-3'></i>
+                            <span>Slow Query</span>
+                            <span class="pull-right">
+                                <i class="fa fa-angle-down"></i>
+                            </span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a href='index.html'>
+                                    <span>Dashboard v1</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href='index2.html'>
+                                    <span>Dashboard v2</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class='has_sub'>
+                        <a href='javascript:void(0);'>
+                            <i class='icon-home-3'></i>
+                            <span>备份与数据校验</span>
+                            <span class="pull-right">
+                                <i class="fa fa-angle-down"></i>
+                            </span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a href='index.html'>
+                                    <span>Dashboard v1</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href='index2.html'>
+                                    <span>Dashboard v2</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class='has_sub'>
+                        <a href='javascript:void(0);'>
+                            <i class='icon-home-3'></i>
+                            <span>实时数据查询</span>
+                            <span class="pull-right">
+                                <i class="fa fa-angle-down"></i>
+                            </span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a href='index.html'>
+                                    <span>Dashboard v1</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href='index2.html'>
+                                    <span>Dashboard v2</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+
+            <div class="clearfix"></div>
+            <br><br><br>
+        </div>
+        <div class="left-footer">
+            <div class="progress progress-xs">
+                <div class="progress-bar bg-green-1" role="progressbar" aria-valuenow="80" aria-valuemin="0"
+                     aria-valuemax="100" style="width: 80%">
+                    <span class="progress-precentage">80%</span>
+                </div>
+
+                <a data-toggle="tooltip" title="See task progress" class="btn btn-default md-trigger"
+                   data-modal="task-progress"><i class="fa fa-inbox"></i></a>
+            </div>
+        </div>
+    </div>
+    <!-- Left Sidebar End -->
+
+    <!-- Right Sidebar Start -->
+    <!-- Right Sidebar End -->
+    <!-- Start right content -->
+    <div class="content-page">
+        <!-- ============================================================== -->
+        <!-- Start Content here -->
+        <!-- ============================================================== -->
+        <div class="content">
+            <!-- Page Heading Start -->
+            <div class="page-heading">
+                {% block heading %}
+                    <h1><i class='fa fa-table'></i> Tables</h1>
+                    <h3>Basic & Simple Sortable Tables</h3>
+                {% endblock %}
+            </div>
+            <!-- Page Heading End-->                <!-- Your awesome content goes here -->
+            <div class="row">
+                {% block content %}
+
+                {% endblock %}
+            </div>
+            <div class="row" style="height: 480px;">
+
+            </div>
+            <!-- Footer Start -->
+            <footer>
+                Voole Operation Team &copy; 2017
+                <div class="footer-links pull-right">
+                    <a href="#">About</a>
+                    <a href="#">Support</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Legal</a>
+                    <a href="#">Help</a>
+                    <a href="#">Contact Us</a>
+                </div>
+            </footer>
+            <!-- Footer End -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- End content here -->
+        <!-- ============================================================== -->
+
+    </div>
+    <!-- End right content -->
+
+</div>
+<!-- End of page -->
+<!-- the overlay modal element -->
+<div class="md-overlay"></div>
+<!-- End of eoverlay modal -->
+<script>
+    var resizefunc = [];
+</script>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="{% static 'assets/libs/jquery/jquery-1.11.1.min.js' %}"></script>
+<script src="{% static 'assets/libs/bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'assets/libs/jqueryui/jquery-ui-1.10.4.custom.min.js' %}"></script>
+<script src="{% static 'assets/libs/jquery-ui-touch/jquery.ui.touch-punch.min.js' %}"></script>
+<script src="{% static 'assets/libs/jquery-detectmobile/detect.js' %}"></script>
+<script src="{% static 'assets/libs/jquery-animate-numbers/jquery.animateNumbers.js' %}"></script>
+<script src="{% static 'assets/libs/ios7-switch/ios7.switch.js' %}"></script>
+<script src="{% static 'assets/libs/fastclick/fastclick.js' %}"></script>
+<script src="{% static 'assets/libs/jquery-blockui/jquery.blockUI.js' %}"></script>
+<script src="{% static 'assets/libs/bootstrap-bootbox/bootbox.min.js' %}"></script>
+<script src="{% static 'assets/libs/jquery-slimscroll/jquery.slimscroll.js' %}"></script>
+<script src="{% static 'assets/libs/jquery-sparkline/jquery-sparkline.js' %}"></script>
+<script src="{% static 'assets/libs/nifty-modal/js/classie.js' %}"></script>
+<script src="{% static 'assets/libs/nifty-modal/js/modalEffects.js' %}"></script>
+<script src="{% static 'assets/libs/sortable/sortable.min.js' %}"></script>
+<script src="{% static 'assets/libs/bootstrap-fileinput/bootstrap.file-input.js' %}"></script>
+<script src="{% static 'assets/libs/bootstrap-select/bootstrap-select.min.js' %}"></script>
+<script src="{% static 'assets/libs/bootstrap-select2/select2.min.js' %}"></script>
+<script src="{% static 'assets/libs/magnific-popup/jquery.magnific-popup.min.js' %}"></script>
+<script src="{% static 'assets/libs/pace/pace.min.js' %}"></script>
+<script src="{% static 'assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
+<script src="{% static 'assets/libs/jquery-icheck/icheck.min.js' %}"></script>
+
+<!-- Demo Specific JS Libraries -->
+<script src="{% static 'assets/libs/prettify/prettify.js' %}"></script>
+
+<script src="{% static 'assets/js/init.js' %}"></script>
+{% block js %}
+
+{% endblock %}
+</body>
+</html>

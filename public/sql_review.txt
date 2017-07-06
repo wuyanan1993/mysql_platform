@@ -2,5 +2,11 @@
 inception_magic_start;
 set names utf8mb4;
 use test;
-SELECT   COUNT(*)  FROM `sharding` WHERE id=10;
+CREATE TABLE `vrm_injection_xml` (
+  `seqno` int(11) NOT NULL AUTO_INCREMENT,
+  `xml` longtext NOT NULL,
+  `status` tinyint(4) NOT NULL DEFAULT '0',
+  `updatetime` datetime NOT NULL,
+  `createtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`seqno`));
 inception_magic_commit;

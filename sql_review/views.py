@@ -25,11 +25,13 @@ def review(request):
         result = cur.fetchall()
         cur.close()
         conn.close()
+        # 处理每一个结果集中的错误信息，将\n替换为</br>，利于前段查看
+        for res in result:
+            pass
         data = {
             'field_names': field_names,
             'result': result
         }
-        print(result)
-        return render(request, 'corporate/blank.html', data)
+        return render(request, 'sql_review/result.html', data)
     except MySQLdb.Error as e:
-        print('Mysql Error %d: %s' % (e.args[0], e.args[1]))
+        return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
