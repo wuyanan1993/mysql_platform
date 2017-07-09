@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': "platform",
         'USER': "root",
         "PASSWORD": "mysql*()",
-        "HOST": '192.168.0.249'
+        "HOST": '172.16.169.131'
     }
 }
 

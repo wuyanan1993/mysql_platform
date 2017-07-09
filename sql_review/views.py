@@ -16,7 +16,7 @@ def review(request):
     finally:
         file_object.close()
     try:
-        conn = MySQLdb.connect(host='192.168.0.249', user='', passwd='', db='', port=6666,
+        conn = MySQLdb.connect(host='172.16.169.131', user='', passwd='', db='', port=6666,
                                client_flag=MULTI_STATEMENTS | MULTI_RESULTS)
         cur = conn.cursor()
         ret = cur.execute(all_the_text)
@@ -25,9 +25,6 @@ def review(request):
         result = cur.fetchall()
         cur.close()
         conn.close()
-        # 处理每一个结果集中的错误信息，将\n替换为</br>，利于前段查看
-        for res in result:
-            pass
         data = {
             'field_names': field_names,
             'result': result

@@ -1,12 +1,12 @@
-/*--user=inception;--password=inception;--host=192.168.0.249;--enable-execute;--port=3306;--disable-remote-backup;*/
+/*--user=inception;--password=inception;--host=172.16.169.131;--enable-check;--port=3306;--disable-remote-backup;*/
 inception_magic_start;
 set names utf8mb4;
 use test;
-CREATE TABLE `vrm_injection_xml` (
-  `seqno` int(11) NOT NULL AUTO_INCREMENT,
-  `xml` longtext NOT NULL,
-  `status` tinyint(4) NOT NULL DEFAULT '0',
-  `updatetime` datetime NOT NULL,
-  `createtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`seqno`));
+CREATE TABLE `vrm_insection_xml` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT comment 'aa',
+  `xmla` longtext NULL comment 'aa',
+  `statuss` tinyint(4) NOT NULL DEFAULT '0' comment 'aa',
+  `updatetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP comment 'aa',
+  `createtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP comment 'aa',
+  PRIMARY KEY (`id`))ENGINE INNODB character set utf8mb4 comment 's';
 inception_magic_commit;
