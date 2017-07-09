@@ -15,10 +15,12 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from statistics.views import index, get_info, test
+from statistics.views import index, get_info, test, processlist, topology
 
 urlpatterns = [
     url(r'^index/', index, name='statistics_index'),
     url(r'^get_info/', get_info, name='statistics_get_info'),
     url(r'^test/', test, name='test'),
+    url(r'^processlist/', processlist, name='statistics_processlist'),
+    url(r'^topology/', topology, name='statistics_topology'),
 ]
