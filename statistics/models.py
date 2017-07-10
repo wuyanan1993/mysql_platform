@@ -31,7 +31,7 @@ class MysqlInstance(models.Model):
     name = models.CharField(max_length=20, null=False, blank=False, verbose_name=u'实例名称')
     group = models.ForeignKey(MysqlInstanceGroup, verbose_name=u'实例组名称')
     ip = models.GenericIPAddressField(null=False, blank=False, verbose_name='IP')
-    instance_port = models.IntegerField(null=False, blank=False, default=3306, verbose_name=u'实例端口')
+    port = models.IntegerField(null=False, blank=False, default=3306, verbose_name=u'实例端口')
     login_instance_account = models.CharField(max_length=20, null=False, blank=False,
                                               default='db_platform', verbose_name=u'登陆实例账号')
     login_instance_password = models.CharField(max_length=20, null=False, blank=False, verbose_name=u'登陆实例密码')

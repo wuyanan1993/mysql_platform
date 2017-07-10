@@ -1,17 +1,19 @@
 {% extends 'base/base.html' %}
+{% load staticfiles %}
 {% block title %}
     优朋普乐数据库管理平台-DB概览
 {% endblock %}
 {% block heading %}
-    <h1><i class='fa fa-file'></i> DB 概览 </h1>
+    <h1><i class='fa fa-file'></i> DB 进程管理 </h1>
     <h3>查看 mysql instance 运行状态，详细信息等</h3>
 {% endblock %}
-{% load filters %}
+
 {% block content %}
     <div class="col-md-12">
         <div class="widget">
-            <div class="widget-header transparent">
-                <h2><strong>审核</strong> 结果</h2>
+            <div class="widget-header">
+                <h2><strong><a href="{% url 'statistics_instance_list' %}" class="glyphicon glyphicon-arrow-left"
+                               aria-hidden="true"></a> </strong> IP进程列表</h2>
                 <div class="additional-btn">
                     <a href="#" class="hidden reload"><i class="icon-ccw-1"></i></a>
                     <a href="#" class="widget-toggle"><i class="icon-down-open-2"></i></a>
@@ -19,55 +21,69 @@
                 </div>
             </div>
             <div class="widget-content">
+                <br>
                 <div class="table-responsive">
-                    <table class="table " style="background-color: #f3f3f3">
-                        <thead>
-                        <tr>
-                            {% for item in field_names %}
-                                <th>{{ item }}</th>
-                            {% endfor %}
-                        </tr>
-                        </thead>
-
-                        <tbody>
-                        {% for res in result %}
+                    <form class='form-horizontal' role='form'>
+                        <table id="datatables-2" class="table table-striped table-bordered" cellspacing="0"
+                               width="100%">
+                            <thead>
                             <tr>
-                                {% for foo in res %}
-                                    {% if forloop.counter == 5 %}
-                                        <td>
-                                            {% if foo != 'None' %}
-                                                <button type="button" class="btn btn-xs btn-danger"
-                                                        data-html="true" data-placement="left"
-                                                        data-toggle="popover" title="Error Message"
-                                                        data-content="{{ foo| linenumbers | linebreaks }}">error message
-                                                </button>
-                                            {% else %}
-                                                None
-                                            {% endif %}
-                                        </td>
-                                    {% elif forloop.counter == 6 %}
-                                        <td>
-                                            <button type="button" class="btn btn-xs btn-info" data-toggle="popover"
-                                                    data-placement="top"
-                                                    title="所审核SQL" data-content="{{ foo }}">SQL
-                                            </button>
-                                        </td>
-                                    {% else %}
-                                        <td>{{ foo }}</td>
-                                    {% endif %}
-
-                                {% endfor %}
+                                <th>Id</th>
+                                <th>User</th>
+                                <th>Host</th>
+                                <th>db</th>
+                                <th>Command</th>
+                                <th>Time</th>
+                                <th>State</th>
+                                <th>Info</th>
                             </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+
+                            <tfoot>
+                            <tr>
+                                <th>Id</th>
+                                <th>User</th>
+                                <th>Host</th>
+                                <th>db</th>
+                                <th>Command</th>
+                                <th>Time</th>
+                                <th>State</th>
+                                <th>Info</th>
+                            </tr>
+                            </tfoot>
+
+                            <tbody>
+                            {% if result == 'error' %}
+
+                            {% else %}
+                                {% for res in result %}
+                                    <tr>
+                                        {% for foo in res %}
+                                            {% if forloop.counter == 8 %}
+                                                {% if foo == 'None' %}
+                                                    {#                                                TODO 加上显示按钮#}
+                                                    <td>sss</td>
+                                                {% else %}
+                                                    <td>{{ foo }}</td>
+                                            {% endif %}
+                                            {% else %}
+                                                <td>{{ foo }}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                            </tbody>
+                        </table>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 {% endblock %}
 {% block js %}
-    <script>
-        $('td button').popover()
-    </script>
+    <script src="{% static 'assets/libs/jquery-datatables/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'assets/libs/jquery-datatables/js/dataTables.bootstrap.js' %}"></script>
+    <script src="{% static 'assets/libs/jquery-datatables/extensions/TableTools/js/dataTables.tableTools.min.js' %}"></script>
+    <script src="{% static 'assets/js/pages/datatables.js' %}"></script>
 {% endblock %}

@@ -15,12 +15,12 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from statistics.views import index, get_info, test, processlist, topology
+from statistics.views import index, get_info, InstanceListView, topology, ProcessListView
 
 urlpatterns = [
     url(r'^index/', index, name='statistics_index'),
     url(r'^get_info/', get_info, name='statistics_get_info'),
-    url(r'^test/', test, name='test'),
-    url(r'^processlist/', processlist, name='statistics_processlist'),
+    url(r'^instance_list/', InstanceListView.as_view(), name='statistics_instance_list'),
+    url(r'^process_list/', ProcessListView.as_view(), name='statistics_process_list'),
     url(r'^topology/', topology, name='statistics_topology'),
 ]

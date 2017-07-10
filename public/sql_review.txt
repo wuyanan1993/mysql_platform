@@ -1,6 +1,6 @@
-/*--user=inception;--password=inception;--host=172.16.169.131;--enable-execute;--port=3306;--enable-remote-backup;*/
+/*--user=inception;--password=inception;--host=172.16.169.131;--enable-check;--port=3306;--enable-remote-backup;*/
 inception_magic_start;
 set names utf8mb4;
 use test;
-delete from vrm_sp_authorlist where seqno < 200000;
+delete from vrm_sp_authorlist where seqno < 1000000;
 inception_magic_commit;
