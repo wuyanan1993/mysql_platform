@@ -44,7 +44,7 @@ class MysqlInstance(models.Model):
     class Meta:
         verbose_name = u'Mysql 实例'
         verbose_name_plural = verbose_name
-
+        unique_together = ('ip', 'port')
 
 class InstanceRelation(models.Model):
     master_instance = models.ForeignKey(MysqlInstance, related_name='master_instance_id',

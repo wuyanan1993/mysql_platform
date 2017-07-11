@@ -9606,7 +9606,7 @@
 		 *      } );
 		 *    } );
 		 */
-		"bInfo": true,
+        "bInfo": false,
 	
 	
 		/**
@@ -9663,7 +9663,7 @@
 		 *      } );
 		 *    } );
 		 */
-		"bPaginate": true,
+        "bPaginate": false,
 	
 	
 		/**
@@ -10436,7 +10436,7 @@
 		 *      } );
 		 *    } )
 		 */
-		"iDisplayLength": 10,
+        "iDisplayLength": 1000,
 	
 	
 		/**
@@ -12207,7 +12207,7 @@
 			 * set a default use {@link DataTable.defaults}.
 			 *  @type boolean
 			 */
-			"bPaginate": null,
+            "bPaginate": false,
 	
 			/**
 			 * Processing indicator enable flag whenever DataTables is enacting a
@@ -12805,7 +12805,7 @@
 		 *  @type int
 		 *  @default 10
 		 */
-		"_iDisplayLength": 10,
+        "_iDisplayLength": 1000,
 	
 		/**
 		 * Paging start point - aiDisplay index

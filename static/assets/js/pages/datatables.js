@@ -36,7 +36,7 @@ $(function(){
                         return intVal(a) + intVal(b);
                 } ) :
                 0;
- 
+
             // Total over this page
             data = api.column( 4, { page: 'current'} ).data();
             pageTotal = data.length ?
@@ -55,6 +55,7 @@ $(function(){
         dom: 'T<"clear">lfrtip',
         tableTools: {
             "sSwfPath": "./assets/libs/jquery-datatables/extensions/TableTools/swf/copy_csv_xls_pdf.swf"
-        }
+        },
+        "pageLength": 50
     } );    
 })
