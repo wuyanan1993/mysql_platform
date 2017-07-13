@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from statistics.views import index
+from statistics.views import index, topology
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^statistics/', include('statistics.urls')),
-    url(r'^sql_review/', include('sql_review.urls'))
+    url(r'^sql_review/', include('sql_review.urls')),
+    url(r'^$', topology)
 ]

@@ -5,6 +5,7 @@ from MySQLdb.constants.CLIENT import MULTI_STATEMENTS, MULTI_RESULTS
 from django.http.response import HttpResponse
 
 from django.shortcuts import render
+from django.views import View
 
 # Create your views here.
 
@@ -32,3 +33,11 @@ def review(request):
         return render(request, 'sql_review/result.html', data)
     except MySQLdb.Error as e:
         return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
+
+
+class StepView(View):
+    def get(self, request):
+        data = {
+            'sub_module': '2_1'
+        }
+        return render(request, 'sql_review/step.html', data)

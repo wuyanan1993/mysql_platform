@@ -37,16 +37,6 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
         <![endif]-->
-
-    <link rel="shortcut icon" href="{% static 'assets/img/favicon.ico' %}">
-    <link rel="apple-touch-icon" href="{% static 'assets/img/apple-touch-icon.png' %}"/>
-    <link rel="apple-touch-icon" sizes="57x57" href="{% static 'assets/img/apple-touch-icon-57x57.png' %}"/>
-    <link rel="apple-touch-icon" sizes="72x72" href="{% static 'assets/img/apple-touch-icon-72x72.png' %}"/>
-    <link rel="apple-touch-icon" sizes="76x76" href="{% static 'assets/img/apple-touch-icon-76x76.png' %}"/>
-    <link rel="apple-touch-icon" sizes="114x114" href="{% static 'assets/img/apple-touch-icon-114x114.png' %}"/>
-    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'assets/img/apple-touch-icon-120x120.png' %}"/>
-    <link rel="apple-touch-icon" sizes="144x144" href="{% static 'assets/img/apple-touch-icon-144x144.png' %}"/>
-    <link rel="apple-touch-icon" sizes="152x152" href="{% static 'assets/img/apple-touch-icon-152x152.png' %}"/>
     {% block extra_static_files %}{% endblock %}
 </head>
 <body class="fixed-left">
@@ -256,12 +246,16 @@
                         </a>
                         <ul>
                             <li>
-                                <a href='{% url 'statistics_topology' %}'>
+                                <a href='{% url 'statistics_topology' %}' class="{% if sub_module == "1_1" %}
+                                    active
+                                {% endif %}">
                                     <span>数据库拓扑图</span>
                                 </a>
                             </li>
                             <li>
-                                <a href='{% url 'statistics_instance_list' %}'>
+                                <a href='{% url 'statistics_instance_list' %}' class="{% if sub_module == "1_2" %}
+                                    active
+                                {% endif %}">
                                     <span>Process List</span>
                                 </a>
                             </li>
@@ -277,7 +271,9 @@
                         </a>
                         <ul>
                             <li>
-                                <a href='index.html'>
+                                <a href='{% url 'sql_review_step' %}' class="{% if sub_module == "2_1" %}
+                                    active
+                                {% endif %}">
                                     <span>提交SQL</span>
                                 </a>
                             </li>
@@ -309,7 +305,9 @@
                         </a>
                         <ul>
                             <li>
-                                <a href='{% url 'statistics_instance_pri_list' %}'>
+                                <a href='{% url 'statistics_instance_pri_list' %}' class="{% if sub_module == "3_1" %}
+                                    active
+                                {% endif %}">
                                     <span>查看权限</span>
                                 </a>
                             </li>
@@ -469,14 +467,14 @@
 <script src="{% static 'assets/libs/jquery-ui-touch/jquery.ui.touch-punch.min.js' %}"></script>
 <script src="{% static 'assets/libs/jquery-detectmobile/detect.js' %}"></script>
 <script src="{% static 'assets/libs/jquery-animate-numbers/jquery.animateNumbers.js' %}"></script>
-<script src="{% static 'assets/libs/ios7-switch/ios7.switch.js' %}"></script>
+{#<script src="{% static 'assets/libs/ios7-switch/ios7.switch.js' %}"></script>#}
 <script src="{% static 'assets/libs/fastclick/fastclick.js' %}"></script>
 <script src="{% static 'assets/libs/jquery-blockui/jquery.blockUI.js' %}"></script>
 <script src="{% static 'assets/libs/bootstrap-bootbox/bootbox.min.js' %}"></script>
 <script src="{% static 'assets/libs/jquery-slimscroll/jquery.slimscroll.js' %}"></script>
 <script src="{% static 'assets/libs/jquery-sparkline/jquery-sparkline.js' %}"></script>
-<script src="{% static 'assets/libs/nifty-modal/js/classie.js' %}"></script>
-<script src="{% static 'assets/libs/nifty-modal/js/modalEffects.js' %}"></script>
+{#<script src="{% static 'assets/libs/nifty-modal/js/classie.js' %}"></script>#}
+{#<script src="{% static 'assets/libs/nifty-modal/js/modalEffects.js' %}"></script>#}
 <script src="{% static 'assets/libs/sortable/sortable.min.js' %}"></script>
 <script src="{% static 'assets/libs/bootstrap-fileinput/bootstrap.file-input.js' %}"></script>
 <script src="{% static 'assets/libs/bootstrap-select/bootstrap-select.min.js' %}"></script>

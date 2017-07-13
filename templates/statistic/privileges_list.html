@@ -127,14 +127,18 @@
 
             rebuild_event();
             $('.pagination').on('click', function () {
+                {#                分页点击后重载点击事件#}
                 rebuild_event()
             });
-            $('[name="datatables-2_length"]').on('change', function () {
+            $('select').on('change', function () {
+                {#                页数选择后重载点击事件#}
                 rebuild_event();
             });
             $('[type="search"]').on('input', function () {
+                {#                搜索内容变后重载点击事件#}
                 rebuild_event()
             });
+
 
         })
     </script>

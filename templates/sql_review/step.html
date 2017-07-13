@@ -1,0 +1,130 @@
+{% extends 'base/base.html' %}
+{% load staticfiles %}
+{% block content %}
+    <div class="row" style="margin-left: 0;margin-right: 0;">
+        <div class="col-md-12 portlets">
+            <!-- Your awesome content goes here -->
+            <div class="widget animated fadeInDown">
+                <form id="myWizard">
+                    <section class="step" data-step-title="选取实例">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="inputEmail">Email</label>
+                                    <input type="text" id="inputEmail" placeholder="Email" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputPassword">Password</label>
+                                    <input type="password" id="inputPassword" placeholder="Password"
+                                           class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="notes">
+                                    <h4><strong>Warning</strong> tips:</h4>
+                                    <p style="text-align: justify">
+                                        SQL 执行规范化是一个艰难且持久的过程
+                                    </p>
+                                    <ol>
+                                        <li>Duis autem vel eum iriure dolor in hendrerit in vulputate</li>
+                                        <li>Lorem ipsum dolor sit amet</li>
+                                        <li>Sed diam nonummy nibh euismod tincidunt</li>
+                                        <li>Sonsectetuer adipiscing elit</li>
+                                        <li>Tincidunt ut laoreet dolore magna aliquam erat volutpat</li>
+                                    </ol>
+                                    <p style="text-align: justify">
+                                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
+                                        euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad
+                                        minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut
+                                        aliquip ex ea commodo consequat.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="step" data-step-title="选取执行时间">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="inputUsername">Username</label>
+                                    <input type="text" id="inputUsername" placeholder="Username" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="notes">
+                                    <h4><strong>Example</strong> note</h4>
+                                    <p style="text-align: justify">
+                                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
+                                        euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad
+                                        minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut
+                                        aliquip ex ea commodo consequat.
+                                    </p>
+                                    <ol>
+                                        <li>Duis autem vel eum iriure dolor in hendrerit in vulputate</li>
+                                        <li>Lorem ipsum dolor sit amet</li>
+                                        <li>Sed diam nonummy nibh euismod tincidunt</li>
+                                        <li>Sonsectetuer adipiscing elit</li>
+                                        <li>Tincidunt ut laoreet dolore magna aliquam erat volutpat</li>
+                                    </ol>
+                                    <p style="text-align: justify">
+                                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
+                                        euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad
+                                        minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut
+                                        aliquip ex ea commodo consequat.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="step" data-step-title="提交SQL">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="inputSQL">请输入SQL：</label>
+                                    <textarea name="SQL" id="inputSQL" cols="30" rows="15"
+                                              class="form-control"></textarea>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="notes">
+                                    <h4><strong>Example</strong> note</h4>
+                                    <p style="text-align: justify">
+                                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
+                                        euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad
+                                        minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut
+                                        aliquip ex ea commodo consequat.
+                                    </p>
+                                    <ol>
+                                        <li>Duis autem vel eum iriure dolor in hendrerit in vulputate</li>
+                                        <li>Lorem ipsum dolor sit amet</li>
+                                        <li>Sed diam nonummy nibh euismod tincidunt</li>
+                                        <li>Sonsectetuer adipiscing elit</li>
+                                        <li>Tincidunt ut laoreet dolore magna aliquam erat volutpat</li>
+                                    </ol>
+                                    <p style="text-align: justify">
+                                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
+                                        euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad
+                                        minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut
+                                        aliquip ex ea commodo consequat.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block title %}
+    优朋普乐数据库管理平台-SQL审核
+{% endblock %}
+{% block js %}
+    <script src="{% static 'assets/libs/jquery-wizard/jquery.easyWizard.js' %}"></script>
+    <script src="{% static 'assets/js/pages/form-wizard.js' %}"></script>
+{% endblock %}
+{% block heading %}
+    <h1><i class='fa fa-file'></i> SQL 提交</h1>
+    <h3>基于 Inception 开发，集SQL审核、自动备份、在线修改表结构等功能为一体的DB运维工具</h3>
+{% endblock %}
