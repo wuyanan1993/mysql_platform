@@ -10,13 +10,18 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <label for="inputEmail">Email</label>
-                                    <input type="text" id="inputEmail" placeholder="Email" class="form-control">
+                                    <label for="selectGroup">选择实例组</label>
+                                    <select class="form-control" id="selectGroup">
+                                        {% for instance_group in instance_groups %}
+                                            <option value="{{ instance_group.id }}">{{ instance_group.name }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="inputPassword">Password</label>
-                                    <input type="password" id="inputPassword" placeholder="Password"
-                                           class="form-control">
+                                    <label for="inputInstance">选择对应实例</label>
+                                    <select class="form-control" id="inputInstance">
+                                        <option value="none">-----请选择对应实例------</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -45,9 +50,13 @@
                     <section class="step" data-step-title="选取执行时间">
                         <div class="row">
                             <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="inputUsername">Username</label>
-                                    <input type="text" id="inputUsername" placeholder="Username" class="form-control">
+                                <div class="input-append date form_datetime" data-date="2013-02-21T15:25:00Z">
+                                    <label for="date_picker" class="pull-left">选择执行日期</label><br/><br/>
+                                    <input style="width: 30%;border:1px solid #aeb9c0;border-radius: 3px;" type="text"
+                                           class="pull-left" id="date_picker" value="" readonly>
+                                    <span class="add-on pull-left" style="width: 30px;height: 30px;">
+                                        <i class="icon-calendar" style="width: 30px;height: 30px;"></i>
+                                    </span>
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -112,6 +121,7 @@
                             </div>
                         </div>
                     </section>
+                    {% csrf_token %}
                 </form>
             </div>
         </div>
@@ -120,11 +130,51 @@
 {% block title %}
     优朋普乐数据库管理平台-SQL审核
 {% endblock %}
-{% block js %}
-    <script src="{% static 'assets/libs/jquery-wizard/jquery.easyWizard.js' %}"></script>
-    <script src="{% static 'assets/js/pages/form-wizard.js' %}"></script>
-{% endblock %}
 {% block heading %}
     <h1><i class='fa fa-file'></i> SQL 提交</h1>
     <h3>基于 Inception 开发，集SQL审核、自动备份、在线修改表结构等功能为一体的DB运维工具</h3>
+{% endblock %}
+{% block js %}
+    <script src="{% static 'assets/libs/jquery-wizard/jquery.easyWizard.js' %}"></script>
+    <script src="{% static 'assets/js/pages/form-wizard.js' %}"></script>
+    <script type="application/javascript">
+        $(function () {
+            $('#selectGroup').on('change', function () {
+                var group = $(this);
+                var csrf = $('[name="csrfmiddlewaretoken"]').val();
+                var instance = $('#inputInstance');
+                instance.empty();
+                instance.append($('<option value="none">-----请选择对应实例------</option>'))
+                $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "{% url 'instance_by_ajax_and_id' %}",
+                    data: {
+                        'group_id': group.val()
+                    },
+                    async: true,
+                    dataType: 'json',
+                    beforeSend: function (xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", csrf);
+                    },
+                    success: function (data) {
+                        for (var i = 0; i < data.length; i++) {
+                            var tmp_node = "<option value='" + data[i].fields.ip + "|" + data[i].fields.port + "'>" + data[i].fields.name +
+                                "</option>";
+                            instance.append($(tmp_node))
+                        }
+                    }
+                });
+
+            });
+            $(".form_datetime").datetimepicker({
+                format: "dd MM yyyy - hh:ii",
+                autoclose: true,
+                todayBtn: true,
+                startDate: "{{ start_time }}",
+                minuteStep: 10
+            });
+
+        })
+    </script>
 {% endblock %}

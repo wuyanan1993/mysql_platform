@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from datetime import datetime
 import MySQLdb
 from MySQLdb.constants.CLIENT import MULTI_STATEMENTS, MULTI_RESULTS
 from django.http.response import HttpResponse
 
 from django.shortcuts import render
 from django.views import View
+from django.core import serializers
+
+from statistics.views import MysqlInstance, MysqlInstanceGroup
 
 # Create your views here.
 
@@ -37,7 +41,16 @@ def review(request):
 
 class StepView(View):
     def get(self, request):
+        instance_groups = MysqlInstanceGroup.objects.all()
         data = {
-            'sub_module': '2_1'
+            'sub_module': '2_1',
+            'instance_groups': instance_groups,
+            'start_time': datetime.now().strftime('%Y-%m-%d %H:%M')
         }
         return render(request, 'sql_review/step.html', data)
+
+
+def instance_by_ajax_and_id(request):
+    group_id = request.POST.get('group_id', '1')
+    instance = MysqlInstance.objects.filter(group=group_id)
+    return HttpResponse(serializers.serialize("json", instance), content_type='application/json')

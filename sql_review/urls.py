@@ -14,9 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from sql_review.views import review, StepView
+from sql_review.views import review, StepView, instance_by_ajax_and_id
 
 urlpatterns = [
     url(r'^review/', review, name='sql_review_review'),
     url(r'^step/', StepView.as_view(), name='sql_review_step'),
+    url(r'^instance_by_ajax_and_id/', instance_by_ajax_and_id, name='instance_by_ajax_and_id'),
 ]
