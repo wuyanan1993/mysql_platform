@@ -49,6 +49,11 @@ class StepView(View):
         }
         return render(request, 'sql_review/step.html', data)
 
+    def post(self, request):
+        date = request.POST.get('execute_time', datetime.now())
+        print(datetime.strptime(date, "%d %B %Y - %H:%M"))
+        return HttpResponse('ok', status=200)
+
 
 def instance_by_ajax_and_id(request):
     group_id = request.POST.get('group_id', '1')

@@ -5,13 +5,13 @@
         <div class="col-md-12 portlets">
             <!-- Your awesome content goes here -->
             <div class="widget animated fadeInDown">
-                <form id="myWizard">
+                <form id="myWizard" action="{% url 'sql_review_step' %}" method="post">
                     <section class="step" data-step-title="选取实例">
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="selectGroup">选择实例组</label>
-                                    <select class="form-control" id="selectGroup">
+                                    <select class="form-control" id="selectGroup" name="instance_group">
                                         {% for instance_group in instance_groups %}
                                             <option value="{{ instance_group.id }}">{{ instance_group.name }}</option>
                                         {% endfor %}
@@ -19,7 +19,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="inputInstance">选择对应实例</label>
-                                    <select class="form-control" id="inputInstance">
+                                    <select class="form-control" id="inputInstance" name="instance">
                                         <option value="none">-----请选择对应实例------</option>
                                     </select>
                                 </div>
@@ -53,9 +53,9 @@
                                 <div class="input-append date form_datetime" data-date="2013-02-21T15:25:00Z">
                                     <label for="date_picker" class="pull-left">选择执行日期</label><br/><br/>
                                     <input style="width: 30%;border:1px solid #aeb9c0;border-radius: 3px;" type="text"
-                                           class="pull-left" id="date_picker" value="" readonly>
-                                    <span class="add-on pull-left" style="width: 30px;height: 30px;">
-                                        <i class="icon-calendar" style="width: 30px;height: 30px;"></i>
+                                           class="pull-left" id="date_picker" value="" name="execute_time" readonly>
+                                    <span class="add-on pull-left" >
+                                        <i class="icon-calendar" ></i>
                                     </span>
                                 </div>
                             </div>
@@ -144,7 +144,7 @@
                 var csrf = $('[name="csrfmiddlewaretoken"]').val();
                 var instance = $('#inputInstance');
                 instance.empty();
-                instance.append($('<option value="none">-----请选择对应实例------</option>'))
+                instance.append($('<option value="none">-----请选择对应实例------</option>'));
                 $.ajax({
                     cache: false,
                     type: "POST",
