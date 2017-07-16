@@ -55,11 +55,13 @@ class StepView(View):
         print(request.POST)
         sql_review_form = SqlReviewRecordForm(request.POST)
         if sql_review_form.is_valid():
-            print('success')
+            sql_review_form.save()
+            return render(request, 'sql_review/result.html')
         else:
-            # print(sql_review_form)
-            pass
-        return HttpResponse('ok', status=200)
+            data = {
+                'error_message': '填写相关信息有误或者未填，请重新填写'
+            }
+            return render(request, 'sql_review/step.html', data)
 
 
 def instance_by_ajax_and_id(request):
