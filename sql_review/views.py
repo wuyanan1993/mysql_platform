@@ -9,7 +9,9 @@ from django.shortcuts import render
 from django.views import View
 from django.core import serializers
 
-from statistics.views import MysqlInstance, MysqlInstanceGroup
+from statistics.models import MysqlInstance, MysqlInstanceGroup
+from sql_review.models import SqlReviewRecord
+from sql_review.forms import SqlReviewRecordForm
 
 # Create your views here.
 
@@ -50,8 +52,13 @@ class StepView(View):
         return render(request, 'sql_review/step.html', data)
 
     def post(self, request):
-        date = request.POST.get('execute_time', datetime.now())
-        print(datetime.strptime(date, "%d %B %Y - %H:%M"))
+        print(request.POST)
+        sql_review_form = SqlReviewRecordForm(request.POST)
+        if sql_review_form.is_valid():
+            print('success')
+        else:
+            # print(sql_review_form)
+            pass
         return HttpResponse('ok', status=200)
 
 

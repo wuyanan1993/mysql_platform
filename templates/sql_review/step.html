@@ -12,6 +12,7 @@
                                 <div class="form-group">
                                     <label for="selectGroup">选择实例组</label>
                                     <select class="form-control" id="selectGroup" name="instance_group">
+                                        <option value="none">-----请选择实例组------</option>
                                         {% for instance_group in instance_groups %}
                                             <option value="{{ instance_group.id }}">{{ instance_group.name }}</option>
                                         {% endfor %}
@@ -23,6 +24,10 @@
                                         <option value="none">-----请选择对应实例------</option>
                                     </select>
                                 </div>
+                                <div class="form-group">
+                                        <label for="inputForWhat">执行目的</label>
+                                        <input type="text" class="form-control" id="inputForWhat" name="for_what">
+                                    </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="notes">
@@ -90,7 +95,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="inputSQL">请输入SQL：</label>
-                                    <textarea name="SQL" id="inputSQL" cols="30" rows="15"
+                                    <textarea name="sql" id="inputSQL" cols="30" rows="15"
                                               class="form-control"></textarea>
                                 </div>
 
@@ -159,7 +164,7 @@
                     },
                     success: function (data) {
                         for (var i = 0; i < data.length; i++) {
-                            var tmp_node = "<option value='" + data[i].fields.ip + "|" + data[i].fields.port + "'>" + data[i].fields.name +
+                            var tmp_node = "<option value='" + data[i].pk + "'>" + data[i].fields.name +
                                 "</option>";
                             instance.append($(tmp_node))
                         }
@@ -168,7 +173,7 @@
 
             });
             $(".form_datetime").datetimepicker({
-                format: "dd MM yyyy - hh:ii",
+                format: "yyyy-mm-dd hh:ii",
                 autoclose: true,
                 todayBtn: true,
                 startDate: "{{ start_time }}",
