@@ -41,7 +41,7 @@ function notify2(style,position) {
     });
 }
 
-function autohidenotify(style,position) {
+function autohidenotify(style,title,text,position) {
  	if(style == "error"){
 		icon = "fa fa-exclamation";
 	}else if(style == "warning"){
@@ -54,8 +54,8 @@ function autohidenotify(style,position) {
 		icon = "fa fa-circle-o";
 	}   
     $.notify({
-        title: 'I will be closed in 3 seconds...',
-        text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vitae orci ut dolor scelerisque aliquam.',
+        title: title,
+        text: text,
         image: "<i class='fa fa-warning'></i>"
     }, {
         style: 'metro',

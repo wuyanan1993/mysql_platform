@@ -2,12 +2,14 @@
 from __future__ import unicode_literals
 from datetime import datetime
 import MySQLdb
+import json
 from MySQLdb.constants.CLIENT import MULTI_STATEMENTS, MULTI_RESULTS
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, HttpResponseRedirect
 
 from django.shortcuts import render
 from django.views import View
 from django.core import serializers
+from django.core.urlresolvers import reverse
 
 from statistics.models import MysqlInstance, MysqlInstanceGroup
 from sql_review.models import SqlReviewRecord
@@ -52,16 +54,26 @@ class StepView(View):
         return render(request, 'sql_review/step.html', data)
 
     def post(self, request):
-        print(request.POST)
         sql_review_form = SqlReviewRecordForm(request.POST)
         if sql_review_form.is_valid():
-            sql_review_form.save()
-            return render(request, 'sql_review/result.html')
+            result = SqlReviewRecord()
+            # result.save()
+            result.sql = sql_review_form.cleaned_data.get('sql')
+            result.for_what = sql_review_form.cleaned_data.get('for_what')
+            result.instance = sql_review_form.cleaned_data.get('instance')
+            result.instance_group = sql_review_form.cleaned_data.get('instance_group')
+            result.execute_time = sql_review_form.cleaned_data.get('execute_time')
+            result.save()
+            data = {
+                'result': 'success',
+                'result_id': result.id
+            }
+            return HttpResponse(json.dumps(data), content_type='application/json')
         else:
             data = {
-                'error_message': '填写相关信息有误或者未填，请重新填写'
+                'result': 'error'
             }
-            return render(request, 'sql_review/step.html', data)
+            return HttpResponse(json.dumps(data), content_type='application/json')
 
 
 def instance_by_ajax_and_id(request):

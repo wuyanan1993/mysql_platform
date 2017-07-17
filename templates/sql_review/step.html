@@ -1,5 +1,9 @@
 {% extends 'base/base.html' %}
 {% load staticfiles %}
+{% block extra_static_files %}
+    <link href="{% static 'assets/libs/jquery-notifyjs/styles/metro/notify-metro.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet" type="text/css" />
+{% endblock %}
 {% block content %}
     <div class="row" style="margin-left: 0;margin-right: 0;">
         <div class="col-md-12 portlets">
@@ -11,7 +15,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="selectGroup">选择实例组</label>
-                                    <select class="form-control" id="selectGroup" name="instance_group">
+                                    <select class="form-control" id="selectGroup" required name="instance_group">
                                         <option value="none">-----请选择实例组------</option>
                                         {% for instance_group in instance_groups %}
                                             <option value="{{ instance_group.id }}">{{ instance_group.name }}</option>
@@ -20,13 +24,13 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="inputInstance">选择对应实例</label>
-                                    <select class="form-control" id="inputInstance" name="instance">
+                                    <select class="form-control" required id="inputInstance" name="instance">
                                         <option value="none">-----请选择对应实例------</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
                                         <label for="inputForWhat">执行目的</label>
-                                        <input type="text" class="form-control" id="inputForWhat" name="for_what">
+                                        <input type="text" required class="form-control" id="inputForWhat" name="for_what">
                                     </div>
                             </div>
                             <div class="col-sm-6">
@@ -57,8 +61,8 @@
                             <div class="col-sm-6">
                                 <div class="input-append date form_datetime" data-date="2013-02-21T15:25:00Z">
                                     <label for="date_picker" class="pull-left">选择执行日期</label><br/><br/>
-                                    <input style="width: 30%;border:1px solid #aeb9c0;border-radius: 3px;" type="text"
-                                           class="pull-left" id="date_picker" value="" name="execute_time" readonly>
+                                    <input style="width: 30%;border:1px solid #aeb9c0;border-radius: 3px;" type="text" id="execute_time"
+                                           class="pull-left" id="date_picker" required value="" name="execute_time" readonly>
                                     <span class="add-on pull-left" >
                                         <i class="icon-calendar" ></i>
                                     </span>
@@ -142,6 +146,9 @@
 {% block js %}
     <script src="{% static 'assets/libs/jquery-wizard/jquery.easyWizard.js' %}"></script>
     <script src="{% static 'assets/js/pages/form-wizard.js' %}"></script>
+    <script src="{% static 'assets/libs/jquery-notifyjs/notify.min.js' %}"></script>
+    <script src="{% static 'assets/libs/jquery-notifyjs/styles/metro/notify-metro.js' %}"></script>
+	<script src="{% static 'assets/js/pages/notifications.js' %}"></script>
     <script type="application/javascript">
         $(function () {
             $('#selectGroup').on('change', function () {
@@ -179,7 +186,39 @@
                 startDate: "{{ start_time }}",
                 minuteStep: 10
             });
+            $('#myWizard').submit(function () {
+                var instance_group = $('#selectGroup').val();
+                var instance = $('#inputInstance').val();
+                var for_what = $('#inputForWhat').val();
+                var execute_time = $('#execute_time').val();
+                var sql = $('#inputSQL').val();
+                var csrf = $('[name="csrfmiddlewaretoken"]').val();
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'sql_review_step' %}",
+                    data: {
+                        'instance_group': instance_group,
+                        'instance': instance,
+                        'for_what': for_what,
+                        'execute_time': execute_time,
+                        'sql': sql
+                    },
+                    dataType: 'json',
+                    beforeSend: function (xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", csrf);
+                    },
+                    success: function (data) {
+                        if(data.result === 'success'){
+                            autohidenotify('success', '提交请求成功。', '您所提交的请求已经发送给对应项目经理，等待确认。');
+                        }else {
+                            autohidenotify('error', '校验失败！！！', '请检查所填字段是否完整且正确，确认后再次提交');
+                        }
+                    }
+                });
+                return false;
+            });
 
         })
     </script>
+
 {% endblock %}
