@@ -209,7 +209,10 @@
                     },
                     success: function (data) {
                         if(data.result === 'success'){
-                            autohidenotify('success', '提交请求成功。', '您所提交的请求已经发送给对应项目经理，等待确认。');
+                            autohidenotify('success', '提交请求成功。', '正在做机器审核请稍等。');
+                            var timer = setTimeout(function(){
+                                location.href = '/sql_review/review_result/' + data.result_id
+                            }, 3000);
                         }else {
                             autohidenotify('error', '校验失败！！！', '请检查所填字段是否完整且正确，确认后再次提交');
                         }

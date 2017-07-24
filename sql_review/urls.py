@@ -17,7 +17,7 @@ from django.conf.urls import url
 from sql_review.views import review, StepView, instance_by_ajax_and_id
 
 urlpatterns = [
-    url(r'^review/', review, name='sql_review_review'),
+    url(r'^review_result/(?P<record_id>[0-9]+)/', review, name='sql_review_review_result'),
     url(r'^step/', StepView.as_view(), name='sql_review_step'),
     url(r'^review_list/', StepView.as_view(), name='sql_review_step'),
     url(r'^instance_by_ajax_and_id/', instance_by_ajax_and_id, name='instance_by_ajax_and_id'),

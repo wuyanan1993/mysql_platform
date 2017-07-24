@@ -11,6 +11,7 @@ from django.views import View
 from django.core import serializers
 from django.core.urlresolvers import reverse
 
+from mysql_platform.settings import INCEPTION_IP, INCEPTION_PORT
 from statistics.models import MysqlInstance, MysqlInstanceGroup
 from sql_review.models import SqlReviewRecord
 from sql_review.forms import SqlReviewRecordForm
@@ -18,14 +19,20 @@ from sql_review.forms import SqlReviewRecordForm
 # Create your views here.
 
 
-def review(request):
-    file_object = open('public/sql_review.txt')
+def review(request, record_id):
+    record = SqlReviewRecord.objects.get(id=record_id)
+    print(record.sql)
+    sql = record.sql
+    instance = record.instance
+    instance_ip = instance.ip
+    instance_port = instance.port
+    all_the_text = message_to_review_sql(host=instance_ip, port=instance_port, sql=sql)
+    # try:
+    #     all_the_text = file_object.read()
+    # finally:
+    #     file_object.close()
     try:
-        all_the_text = file_object.read()
-    finally:
-        file_object.close()
-    try:
-        conn = MySQLdb.connect(host='172.16.169.131', user='', passwd='', db='', port=6666,
+        conn = MySQLdb.connect(host=INCEPTION_IP, user='', passwd='', db='', port=INCEPTION_PORT,
                                client_flag=MULTI_STATEMENTS | MULTI_RESULTS)
         cur = conn.cursor()
         ret = cur.execute(all_the_text)
@@ -41,6 +48,16 @@ def review(request):
         return render(request, 'sql_review/result.html', data)
     except MySQLdb.Error as e:
         return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
+
+
+def message_to_review_sql(host, port, sql):
+    review_sql = """
+    /*--user=inception;--password=inception;--host=""" + host + """;--enable-check;--port=""" + str(port) + """;--disable-remote-backup;*/
+inception_magic_start;
+""" + sql + """
+inception_magic_commit;    
+    """
+    return review_sql
 
 
 class StepView(View):

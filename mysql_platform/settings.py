@@ -129,3 +129,6 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "templates/corporate/assets"),
 )
 
+INCEPTION_IP = '172.16.169.131'
+INCEPTION_PORT = 6666
+
