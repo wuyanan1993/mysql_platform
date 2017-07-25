@@ -18,7 +18,7 @@
                     <a href="#" class="widget-close"><i class="icon-cancel-3"></i></a>
                 </div>
             </div>
-            <div class="widget-content">
+            <div class="widget-content" style="background-color: #f3f3f3">
                 <div class="table-responsive">
                     <table class="table " style="background-color: #f3f3f3">
                         <thead>
@@ -61,13 +61,53 @@
                         {% endfor %}
                         </tbody>
                     </table>
+                    <button type="button" class="btn btn-orange-2" style="float: right;margin-top: 10px"
+                            data-toggle="tooltip" data-placement="left"
+                            title="注意：正常情况下请将所有 ERROR 改正后再提交">提交至项目经理审核
+                    </button>
+                    <button type="button" class="btn btn-orange-2 modify-sql" data-toggle="modal"
+                            style="float: right;margin-top: 10px;margin-right: 10px"
+                            data-target="#myModal" data-my-value="{{ record_id }}">修改SQL
+                    </button>
+
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">修改SQL</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="modified-sql" class="control-label">SQL:</label>
+                            <textarea class="form-control" id="modified-sql"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 {% endblock %}
 {% block js %}
     <script>
-        $('td button').popover()
+        $('td button').popover();
+        $('[data-toggle="tooltip"]').tooltip();
+        $('.modify-sql').on('click', function () {
+
+        })
     </script>
 {% endblock %}

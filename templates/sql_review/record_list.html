@@ -1,0 +1,93 @@
+{% extends 'base/base.html' %}
+{% block title %}
+    优朋普乐数据库管理平台-SQL审核
+{% endblock %}
+{% block heading %}
+    <h1><i class='fa fa-file'></i> SQL 审核</h1>
+    <h3>基于 Inception 开发，集SQL审核、自动备份、在线修改表结构等功能为一体的DB运维工具</h3>
+{% endblock %}
+{% load filters %}
+{% block content %}
+    <div class="col-md-12" >
+        <div class="widget">
+            <div class="widget-header transparent">
+                <h2><strong>已提交</strong> 列表</h2>
+                <div class="additional-btn">
+                    <a href="#" class="hidden reload"><i class="icon-ccw-1"></i></a>
+                    <a href="#" class="widget-toggle"><i class="icon-down-open-2"></i></a>
+                    <a href="#" class="widget-close"><i class="icon-cancel-3"></i></a>
+                </div>
+            </div>
+            <div class="widget-content" style="background-color: #f3f3f3">
+                <div class="table-responsive">
+                    <table class="table " style="background-color: #f3f3f3">
+                        <thead>
+                        <tr>
+                            <th style="text-align: center">ID</th>
+                            <th style="text-align: center">执行用途</th>
+                            <th style="text-align: center">提交时间</th>
+                            <th style="text-align: center">执行时间</th>
+                            <th style="text-align: center">SQL</th>
+                            <th style="text-align: center">机器审核</th>
+                            <th style="text-align: center">项目经理审核</th>
+                            <th style="text-align: center">执行</th>
+                            <th style="text-align: center">实例名</th>
+                            <th style="text-align: center">实例组</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for list in record_list %}
+                            <tr>
+                                <td align="center">{{ list.id }}</td>
+                                <td align="center">{{ list.for_what }}</td>
+                                <td align="center">{{ list.submit_time }}</td>
+                                <td align="center">{{ list.execute_time }}</td>
+                                <td align="center">
+                                    <button type="button" class="btn btn-xs btn-info"
+                                            data-html="true" data-placement="left"
+                                            data-toggle="popover" title="SQL"
+                                            data-content="{{ list.sql | linebreaks }}"
+                                            style="border-radius: 5px">
+                                        SQL
+                                    </button>
+                                </td>
+                                <td align="center">
+                                    {% if list.is_checked == 1 %}
+                                        <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: limegreen;"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span>
+                                    {% endif %}
+                                </td>
+                                <td align="center">
+                                    {% if list.is_reviewed == 1 %}
+                                        <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: limegreen;"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span>
+                                    {% endif %}
+                                </td>
+                                <td align="center">
+                                    {% if list.is_executed == 1 %}
+                                        <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: limegreen;"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span>
+                                    {% endif %}
+                                </td>
+                                <td align="center">{{ list.instance.name }}</td>
+                                <td align="center">{{ list.instance_group.name }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+{% block js %}
+    <script>
+        $('td button').popover();
+    </script>
+{% endblock %}

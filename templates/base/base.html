@@ -278,7 +278,9 @@
                                 </a>
                             </li>
                             <li>
-                                <a href='index2.html'>
+                                <a href='{% url 'sql_review_submitted_list' %}' class="{% if sub_module == "2_2" %}
+                                    active
+                                {% endif %}">
                                     <span>已提交</span>
                                 </a>
                             </li>
