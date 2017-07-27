@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from datetime import datetime
 import MySQLdb
 import json
+import time
 from MySQLdb.constants.CLIENT import MULTI_STATEMENTS, MULTI_RESULTS
 from django.http.response import HttpResponse, HttpResponseRedirect
 
@@ -24,7 +25,8 @@ def review(request, record_id):
     instance = record.instance
     instance_ip = instance.ip
     instance_port = instance.port
-    all_the_text = message_to_review_sql(host=instance_ip, port=instance_port, sql=sql)
+    all_the_text = message_to_review_sql(option='--enable-check;--disable-remote-backup;', host=instance_ip,
+                                         port=instance_port, sql=sql)
     try:
         conn = MySQLdb.connect(host=INCEPTION_IP, user='', passwd='', db='', port=INCEPTION_PORT,
                                client_flag=MULTI_STATEMENTS | MULTI_RESULTS)
@@ -48,16 +50,17 @@ def review(request, record_id):
             'result': result,
             'sub_module': '2_1',
             'flag': flag,
-            'record_id': record.id
+            'record_id': record.id,
+            'sql': sql
         }
         return render(request, 'sql_review/result.html', data)
     except MySQLdb.Error as e:
         return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
 
 
-def message_to_review_sql(host, port, sql):
+def message_to_review_sql(host, port, sql, option):
     review_sql = """
-    /*--user=inception;--password=inception;--host=""" + host + """;--enable-check;--port=""" + str(port) + """;--disable-remote-backup;*/
+    /*--user=inception;--password=inception;--host=""" + host + """;--port=""" + str(port) + """;""" + option + """*/
 inception_magic_start;
 """ + sql + """
 inception_magic_commit;    
@@ -112,3 +115,53 @@ def submitted_list(request):
         'sub_module': '2_2'
     }
     return render(request, 'sql_review/record_list.html', data)
+
+
+def modify_submitted_sql(request):
+    time.sleep(3)
+    record = SqlReviewRecord.objects.get(id=request.POST.get('record_id'))
+    new_sql = request.POST.get('sql', 'select 1')
+    new_record = SqlReviewRecord()
+    new_record.sql = new_sql
+    new_record.for_what = record.for_what
+    new_record.instance = record.instance
+    new_record.instance_group = record.instance_group
+    new_record.execute_time = record.execute_time
+    new_record.save()
+    data = {
+        'new_id': new_record.id,
+        'status': 'success'
+    }
+    return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+def sql_execute(request, record_id):
+    record = SqlReviewRecord.objects.get(id=record_id)
+    sql = record.sql
+    instance = record.instance
+    instance_ip = instance.ip
+    instance_port = instance.port
+    # 组成一个inception 可以执行的 sql
+    all_the_text = message_to_review_sql(option='--enable-execute;--enable-remote-backup;',
+                                         host=instance_ip, port=instance_port, sql=sql)
+    try:
+        conn = MySQLdb.connect(host=INCEPTION_IP, user='', passwd='', db='', port=INCEPTION_PORT,
+                               client_flag=MULTI_STATEMENTS | MULTI_RESULTS)
+        cur = conn.cursor()
+        ret = cur.execute(all_the_text)
+        field_names = [i[0] for i in cur.description]
+        result = cur.fetchall()
+        # 判断结果中是否有error level 为 2 的，如果有，则不做操作，如果没有则将sql_review_record 记录的 is_checked 设为1
+        cur.close()
+        conn.close()
+        data = {
+            'field_names': field_names,
+            'result': result,
+            'sub_module': '2_1',
+            'record_id': record.id,
+            'sql': sql
+        }
+        return render(request, 'sql_review/execute_result.html', data)
+    except MySQLdb.Error as e:
+        return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
+

@@ -14,7 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from sql_review.views import review, StepView, instance_by_ajax_and_id, submitted_list
+from sql_review.views import review, StepView, instance_by_ajax_and_id, submitted_list, modify_submitted_sql
+from sql_review.views import sql_execute
 
 urlpatterns = [
     url(r'^review_result/(?P<record_id>[0-9]+)/', review, name='sql_review_review_result'),
@@ -22,4 +23,6 @@ urlpatterns = [
     url(r'^review_list/', StepView.as_view(), name='sql_review_step'),
     url(r'^instance_by_ajax_and_id/', instance_by_ajax_and_id, name='instance_by_ajax_and_id'),
     url(r'^submitted_list/', submitted_list, name='sql_review_submitted_list'),
+    url(r'^modify_submitted_sql/', modify_submitted_sql, name='sql_review_modify_submitted_sql'),
+    url(r'^sql_execute/(?P<record_id>[0-9]+)/', sql_execute, name='sql_review_sql_execute'),
 ]
