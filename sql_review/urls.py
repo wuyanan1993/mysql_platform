@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from sql_review.views import review, StepView, instance_by_ajax_and_id, submitted_list, modify_submitted_sql
-from sql_review.views import sql_execute
+from sql_review.views import sql_execute, finished_list, rollback
 
 urlpatterns = [
     url(r'^review_result/(?P<record_id>[0-9]+)/', review, name='sql_review_review_result'),
@@ -25,4 +25,6 @@ urlpatterns = [
     url(r'^submitted_list/', submitted_list, name='sql_review_submitted_list'),
     url(r'^modify_submitted_sql/', modify_submitted_sql, name='sql_review_modify_submitted_sql'),
     url(r'^sql_execute/(?P<record_id>[0-9]+)/', sql_execute, name='sql_review_sql_execute'),
+    url(r'^finished_list/', finished_list, name='sql_review_finished_list'),
+    url(r'^roll_back/(?P<record_id>[0-9]+)/', rollback, name='sql_review_rollback'),
 ]

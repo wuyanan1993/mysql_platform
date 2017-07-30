@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 from datetime import datetime
 import MySQLdb
 import json
-import time
 from MySQLdb.constants.CLIENT import MULTI_STATEMENTS, MULTI_RESULTS
 from django.http.response import HttpResponse, HttpResponseRedirect
 
@@ -13,7 +12,7 @@ from django.core import serializers
 
 from mysql_platform.settings import INCEPTION_IP, INCEPTION_PORT
 from statistics.models import MysqlInstance, MysqlInstanceGroup
-from sql_review.models import SqlReviewRecord
+from sql_review.models import SqlReviewRecord, SqlBackupRecord
 from sql_review.forms import SqlReviewRecordForm
 
 # Create your views here.
@@ -82,7 +81,6 @@ class StepView(View):
         sql_review_form = SqlReviewRecordForm(request.POST)
         if sql_review_form.is_valid():
             result = SqlReviewRecord()
-            # result.save()
             result.sql = sql_review_form.cleaned_data.get('sql')
             result.for_what = sql_review_form.cleaned_data.get('for_what')
             result.instance = sql_review_form.cleaned_data.get('instance')
@@ -118,7 +116,6 @@ def submitted_list(request):
 
 
 def modify_submitted_sql(request):
-    time.sleep(3)
     record = SqlReviewRecord.objects.get(id=request.POST.get('record_id'))
     new_sql = request.POST.get('sql', 'select 1')
     new_record = SqlReviewRecord()
@@ -151,7 +148,25 @@ def sql_execute(request, record_id):
         ret = cur.execute(all_the_text)
         field_names = [i[0] for i in cur.description]
         result = cur.fetchall()
-        # 判断结果中是否有error level 为 2 的，如果有，则不做操作，如果没有则将sql_review_record 记录的 is_checked 设为1
+        # 判断结果中是否有执行成功的状态，如果有则将备份信息存入表中，等待给以后做回滚
+        for res in result:
+            if res[1] == 'EXECUTED' and res[2] == 0:
+                sql_backup_instance = SqlBackupRecord()
+                sql_backup_instance.sql = sql
+                sql_backup_instance.review_record_id = record_id
+                sql_backup_instance.sequence = res[7]
+                sql_backup_instance.backup_db_name = res[8]
+                sql_backup_instance.sql_sha1 = res[10]
+                print(sql_backup_instance)
+                sql_backup_instance.save()
+        # 判断结果中是否有error level 为 2 的，如果有，则不做操作，如果没有则将 sql_review_record 记录的 is_executed 设为1
+        flag = 'success'
+        for res in result:
+            if res[2] == 2:
+                flag = 'failed'
+        if flag == 'success':
+            record.is_executed = 1
+            record.save()
         cur.close()
         conn.close()
         data = {
@@ -165,3 +180,20 @@ def sql_execute(request, record_id):
     except MySQLdb.Error as e:
         return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
 
+
+def finished_list(request):
+    # 取出账号权限下所有的执行完成列表
+    record_list = SqlReviewRecord.objects.filter(is_checked=1,is_executed=1).order_by('-id')
+    data = {
+        'record_list': record_list,
+        'sub_module': '2_4',
+    }
+    return render(request, 'sql_review/finished_list.html', data)
+
+
+def rollback(request, record_id):
+    rollback_list = SqlBackupRecord.objects.filter(review_record_id=record_id)
+    data = {
+        'rollback_list': rollback_list
+    }
+    return render(request, 'sql_review/rollback.html', data)

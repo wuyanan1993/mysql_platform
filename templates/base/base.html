@@ -290,7 +290,9 @@
                                 </a>
                             </li>
                             <li>
-                                <a href='index2.html'>
+                                <a href='{% url 'sql_review_finished_list' %}' class="{% if sub_module == "2_4" %}
+                                    active
+                                {% endif %}">
                                     <span>已完成</span>
                                 </a>
                             </li>

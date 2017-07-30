@@ -2,5 +2,5 @@
 inception_magic_start;
 set names utf8mb4;
 use test;
-delete from vrm_sp_authorlist;
+delete from shadow;
 inception_magic_commit;
