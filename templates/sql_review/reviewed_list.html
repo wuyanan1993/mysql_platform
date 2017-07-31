@@ -24,35 +24,25 @@
                         <thead>
                         <tr>
                             <th style="text-align: center">ID</th>
-                            <th style="text-align: center">请求ID</th>
-                            <th style="text-align: center">执行序列</th>
-                            <th style="text-align: center">数据库IP</th>
-                            <th style="text-align: center">数据库名</th>
-                            <th style="text-align: center">数据表</th>
+                            <th style="text-align: center">执行用途</th>
+                            <th style="text-align: center">提交时间</th>
+                            <th style="text-align: center">执行时间</th>
                             <th style="text-align: center">SQL</th>
-                            <th style="text-align: center">sql_sha1</th>
-                            <th style="text-align: center">回滚？</th>
+                            <th style="text-align: center">机器审核</th>
+                            <th style="text-align: center">项目经理审核</th>
+                            <th style="text-align: center">执行</th>
+                            <th style="text-align: center">实例名</th>
+                            <th style="text-align: center">实例组</th>
                         </tr>
                         </thead>
 
                         <tbody>
-                        {% for list in rollback_list %}
+                        {% for list in record_list %}
                             <tr>
                                 <td align="center">{{ list.id }}</td>
-                                <td align="center">{{ list.review_record_id }}</td>
-
-                                <td align="center">
-                                    {{ list.sequence }}
-                                </td>
-                                <td align="center">
-                                    {{ list.db_host }}
-                                </td>
-                                <td align="center">
-                                    {{ list.db_name }}
-                                </td>
-                                <td align="center">
-                                    {{ list.db_table_name }}
-                                </td>
+                                <td align="center">{{ list.for_what }}</td>
+                                <td align="center">{{ list.submit_time }}</td>
+                                <td align="center">{{ list.execute_time }}</td>
                                 <td align="center">
                                     <button type="button" class="btn btn-xs btn-info"
                                             data-html="true" data-placement="left"
@@ -63,13 +53,29 @@
                                     </button>
                                 </td>
                                 <td align="center">
-                                    {{ list.sql_sha1 }}
+                                    {% if list.is_checked == 1 %}
+                                        <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: limegreen;"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span>
+                                    {% endif %}
                                 </td>
                                 <td align="center">
-                                    <a href="">
-                                        <span class="glyphicon glyphicon-ok" aria-hidden="true" ></span>
-                                    </a>
+                                    {% if list.is_reviewed == 1 %}
+                                        <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: limegreen;"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span>
+                                    {% endif %}
                                 </td>
+                                <td align="center">
+                                    {% if list.is_executed == 1 %}
+                                        <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: limegreen;"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span>
+                                    {% endif %}
+                                </td>
+                                <td align="center">{{ list.instance.name }}</td>
+                                <td align="center">{{ list.instance_group.name }}</td>
+                                
                             </tr>
                         {% endfor %}
                         </tbody>

@@ -285,7 +285,9 @@
                                 </a>
                             </li>
                             <li>
-                                <a href='index2.html'>
+                                <a href='{% url 'sql_review_reviewed_list' %}' class="{% if sub_module == "2_3" %}
+                                    active
+                                {% endif %}">
                                     <span>已审核</span>
                                 </a>
                             </li>

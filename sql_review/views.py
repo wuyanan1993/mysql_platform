@@ -10,7 +10,8 @@ from django.shortcuts import render
 from django.views import View
 from django.core import serializers
 
-from mysql_platform.settings import INCEPTION_IP, INCEPTION_PORT
+from mysql_platform.settings import INCEPTION_IP, INCEPTION_PORT, BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_PASSWORD
+from mysql_platform.settings import BACKUP_USER
 from statistics.models import MysqlInstance, MysqlInstanceGroup
 from sql_review.models import SqlReviewRecord, SqlBackupRecord
 from sql_review.forms import SqlReviewRecordForm
@@ -152,12 +153,10 @@ def sql_execute(request, record_id):
         for res in result:
             if res[1] == 'EXECUTED' and res[2] == 0:
                 sql_backup_instance = SqlBackupRecord()
-                sql_backup_instance.sql = sql
                 sql_backup_instance.review_record_id = record_id
-                sql_backup_instance.sequence = res[7]
                 sql_backup_instance.backup_db_name = res[8]
+                sql_backup_instance.sequence = res[7]
                 sql_backup_instance.sql_sha1 = res[10]
-                print(sql_backup_instance)
                 sql_backup_instance.save()
         # 判断结果中是否有error level 为 2 的，如果有，则不做操作，如果没有则将 sql_review_record 记录的 is_executed 设为1
         flag = 'success'
@@ -181,6 +180,16 @@ def sql_execute(request, record_id):
         return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
 
 
+def reviewed_list(request):
+    # 取出账号权限下所有的项目经理审核完成列表
+    record_list = SqlReviewRecord.objects.filter(is_checked=1, is_reviewed=1).order_by('-id')
+    data = {
+        'record_list': record_list,
+        'sub_module': '2_3',
+    }
+    return render(request, 'sql_review/reviewed_list.html', data)
+
+
 def finished_list(request):
     # 取出账号权限下所有的执行完成列表
     record_list = SqlReviewRecord.objects.filter(is_checked=1,is_executed=1).order_by('-id')
@@ -193,7 +202,32 @@ def finished_list(request):
 
 def rollback(request, record_id):
     rollback_list = SqlBackupRecord.objects.filter(review_record_id=record_id)
+    for idx, obj in enumerate(rollback_list):
+        backup_db = obj.backup_db_name
+        sequence = obj.sequence
+        sql = 'select * from $_$Inception_backup_information$_$ where `opid_time` = {}'.format(sequence)
+        result = get_sql_result(BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_USER, BACKUP_PASSWORD,
+                                backup_db,
+                                sql)
+        rollback_list[idx].sql = result[0][5]
+        rollback_list[idx].db_host = result[0][6]
+        rollback_list[idx].db_name = result[0][7]
+        rollback_list[idx].db_table_name = result[0][8]
     data = {
         'rollback_list': rollback_list
     }
     return render(request, 'sql_review/rollback.html', data)
+
+
+def get_sql_result(host_ip, host_port, user, password, database, sql):
+    try:
+        conn = MySQLdb.connect(host=host_ip, user=user, passwd=password, db=database, port=host_port,
+                               client_flag=MULTI_STATEMENTS | MULTI_RESULTS)
+        cur = conn.cursor()
+        ret = cur.execute(sql)
+        result = cur.fetchall()
+        cur.close()
+        conn.close()
+        return result
+    except MySQLdb.Error as e:
+        return 'error'

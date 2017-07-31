@@ -34,6 +34,5 @@ class SqlBackupRecord(models.Model):
     review_record_id = models.IntegerField(default=0, null=False, blank=False, verbose_name=u'对应审核记录的id')
     sequence = models.CharField(max_length=30, verbose_name=u'执行结果中的sequence，用来查找多用的回滚语句', default='',
                                 null=False, blank=False)
-    sql = models.TextField(verbose_name=u'执行的sql', null=False, blank=False)
     backup_db_name = models.CharField(max_length=40, default='', null=False, blank=False, verbose_name=u'备份数据库名')
     sql_sha1 = models.CharField(max_length=50, default='', null=True, blank=True, verbose_name=u'如果是osc，会有此值')
