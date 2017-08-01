@@ -231,3 +231,59 @@ def get_sql_result(host_ip, host_port, user, password, database, sql):
         return result
     except MySQLdb.Error as e:
         return 'error'
+
+
+def dml_sql_in_transaction(host_ip, host_port, user, password, database, sql_list):
+    conn = MySQLdb.connect(host=host_ip, user=user, passwd=password, db=database, port=host_port,
+                           client_flag=MULTI_STATEMENTS | MULTI_RESULTS)
+    cur = conn.cursor()
+    try:
+        for sql in sql_list:
+            cur.execute(sql)
+        cur.close()
+        conn.commit()
+        conn.close()
+        return 'ok'
+    except MySQLdb.Error as e:
+        cur.close()
+        conn.rollback()
+        conn.close()
+        return 'error'
+
+
+def ajax_rollback_by_sequence(request):
+    sequence = request.POST.get('sequence')
+    sequence_list = sorted(sequence.strip(',').split(','), reverse=True)
+    # 获取所有 sequence 的数据库名，进而获取回滚语句
+    record = SqlBackupRecord.objects.get(sequence=sequence_list[0])
+    backup_database_name = record.backup_db_name
+    content = backup_database_name.split('_')
+    host_ip = '{}.{}.{}.{}'.format(content[0], content[1], content[2], content[3])
+    host_port = int(content[4])
+    mysql_instance = MysqlInstance.objects.get(ip=host_ip, port=host_port)
+    user = mysql_instance.login_instance_account
+    password = mysql_instance.login_instance_password
+    sql_list = list()
+    for sequence in sequence_list:
+        record = SqlBackupRecord.objects.get(sequence=sequence)
+        backup_database_name = record.backup_db_name
+
+        sql = 'select tablename from $_$Inception_backup_information$_$ where opid_time = {} limit 1'.format(sequence)
+        result = get_sql_result(BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_USER, BACKUP_PASSWORD,
+                                backup_database_name, sql)
+        table_name = result[0][0]
+        sql = 'select rollback_statement from {} where opid_time = {}'.format(table_name, sequence)
+        sql_result = get_sql_result(BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_USER, BACKUP_PASSWORD,
+                                    backup_database_name, sql)
+        sql_result = sql_result[0][0]
+        sql_list.append(sql_result)
+    result = dml_sql_in_transaction(host_ip, host_port, user, password, '', sql_list)
+    if result == 'ok':
+        data = {
+            'status': 'success',
+        }
+    else:
+        data = {
+            'status': 'error'
+        }
+    return HttpResponse(json.dumps(data), content_type='application/json')

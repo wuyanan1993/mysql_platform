@@ -23,6 +23,9 @@
                     <table class="table " style="background-color: #f3f3f3">
                         <thead>
                         <tr>
+                            <th>
+                                <input type="checkbox" id="checkall">
+                            </th>
                             <th style="text-align: center">ID</th>
                             <th style="text-align: center">请求ID</th>
                             <th style="text-align: center">执行序列</th>
@@ -38,6 +41,9 @@
                         <tbody>
                         {% for list in rollback_list %}
                             <tr>
+                                <td>
+                                    <input type="checkbox" class="single-checkbox" data-sequence="{{ list.sequence }}">
+                                </td>
                                 <td align="center">{{ list.id }}</td>
                                 <td align="center">{{ list.review_record_id }}</td>
 
@@ -72,7 +78,24 @@
                                 </td>
                             </tr>
                         {% endfor %}
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td align="center">
+                                <a type="button" class="btn btn-primary btn-sm rollbackselect" data-user="">回滚所选</a>
+                            </td>
+                            <td align="center">
+                                <a type="button" class="btn btn-primary btn-sm rollbackall" data-user="{% for rollback in rollback_list %}{{ rollback.sequence }},{% endfor %}">回滚全部</a>
+                            </td>
+                        </tr>
                         </tbody>
+                        {% csrf_token %}
                     </table>
                 </div>
             </div>
@@ -84,5 +107,50 @@
 {% block js %}
     <script>
         $('td button').popover();
+        function rollback(sequence_data){
+            var csrf = $('[name="csrfmiddlewaretoken"]').val();
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'sql_review_ajax_rollback_by_sequence' %}",
+                data: {
+                    'sequence': sequence_data
+                },
+                async: false,
+                dataType: 'json',
+                beforeSend: function (xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf);
+                },
+                success: function (data) {
+                    if(data.status === 'success'){
+                        alert('回滚成功')
+                    }else{
+                        alert('回滚失败')
+                    }
+                }
+            });
+        }
+        $('#checkall').on('change', function () {
+            var checkall = $(this);
+            $('.single-checkbox').each(function () {
+                if(checkall.prop('checked')){
+                    $(this).prop('checked', true)
+                }else{
+                    $(this).prop('checked', false)
+                }
+            });
+        });
+        $('.rollbackselect').on('click', function () {
+            var data = '';
+            $('.single-checkbox').each(function () {
+                if($(this).prop('checked')){
+                    data += $(this).attr('data-sequence') + ','
+                }
+            });
+            rollback(data)
+        });
+        $('.rollbackall').on('click', function () {
+            rollback($(this).attr('data-user'))
+        })
     </script>
 {% endblock %}
