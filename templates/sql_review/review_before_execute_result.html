@@ -24,7 +24,12 @@
                         <thead>
                         <tr>
                             {% for item in field_names %}
-                                <th>{{ item }}</th>
+                                {% if item == 'sqlsha1' %}
+                                    <th style="text-align: center"> osc 执行进度</th>
+                                {% else %}
+                                    <th style="text-align: center">{{ item }}</th>
+                                {% endif %}
+
                             {% endfor %}
                         </tr>
                         </thead>
@@ -34,7 +39,7 @@
                             <tr>
                                 {% for foo in res %}
                                     {% if forloop.counter == 5 %}
-                                        <td>
+                                        <td align="center">
                                             {% if foo != 'None' %}
                                                 <button type="button" class="btn btn-xs btn-danger"
                                                         data-html="true" data-placement="left"
@@ -46,14 +51,20 @@
                                             {% endif %}
                                         </td>
                                     {% elif forloop.counter == 6 %}
-                                        <td>
+                                        <td align="center">
                                             <button type="button" class="btn btn-xs btn-info" data-toggle="popover"
                                                     data-placement="top"
                                                     title="所审核SQL" data-content="{{ foo }}">SQL
                                             </button>
                                         </td>
+                                    {% elif forloop.counter == 11 %}
+                                        <td align="center">
+                                            <a type="button" class="btn btn-xs btn-info" href="{% url 'sql_review_osc_process' foo %}" target="_blank">
+                                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                            </a>
+                                        </td>
                                     {% else %}
-                                        <td>{{ foo }}</td>
+                                        <td align="center">{{ foo }}</td>
                                     {% endif %}
 
                                 {% endfor %}
@@ -61,41 +72,10 @@
                         {% endfor %}
                         </tbody>
                     </table>
-                    <a type="button" class="btn btn-orange-2 submit_to_pm" style="float: right;margin-top: 10px"
-                            data-toggle="tooltip" data-placement="left" data-record-id="{{ record_id }}"
-                            title="注意：正常情况下请将所有 ERROR 改正后再提交">提交至项目经理审核
+                    <a href="{% url 'sql_review_sql_execute' record_id %}" type="button" class="btn btn-orange-2" style="float: right;margin-top: 10px"
+                            data-toggle="tooltip" data-placement="left"
+                            title="注意：DDL语句回滚操作，请重新提交SQL进行回滚">执行
                     </a>
-                    <button type="button" class="btn btn-orange-2 modify-sql" data-toggle="modal"
-                            style="float: right;margin-top: 10px;margin-right: 10px"
-                            data-target="#myModal" >修改SQL
-                    </button>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">修改SQL</h4>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label for="modified-sql" class="control-label">新的SQL:</label>
-                            <textarea class="form-control" id="modified-sql" rows="15">{{ sql }}</textarea>
-                            {% csrf_token %}
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary save-changes" data-record-id="{{ record_id }}">Save changes</button>
                 </div>
             </div>
         </div>
@@ -129,27 +109,6 @@
                         location.href = '/sql_review/review_result/' + data.new_id
                     }else {
                         alert('failed')
-                    }
-                }
-            });
-        });
-        $('.submit_to_pm').on('click', function () {
-            var csrf = $('[name="csrfmiddlewaretoken"]').val();
-            var record_id = $(this).attr('data-record-id');
-            $.ajax({
-                type: "POST",
-                url: "{% url 'sql_review_submit_to_pm' %}",
-                data: {
-                    'record_id': record_id
-                },
-                dataType: 'json',
-                beforeSend: function (xhr, settings) {
-                    xhr.setRequestHeader("X-CSRFToken", csrf);
-                },
-                success: function (data) {
-                    if(data.status === 'success'){
-                        alert('成功');
-                        location.href = '/sql_review/submitted_list/'
                     }
                 }
             });

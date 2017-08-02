@@ -33,6 +33,7 @@
                             <th style="text-align: center">执行</th>
                             <th style="text-align: center">实例名</th>
                             <th style="text-align: center">实例组</th>
+                            <th style="text-align: center">操作</th>
                         </tr>
                         </thead>
 
@@ -75,7 +76,14 @@
                                 </td>
                                 <td align="center">{{ list.instance.name }}</td>
                                 <td align="center">{{ list.instance_group.name }}</td>
-                                
+                                <td>
+                                    <a href="{% url 'sql_review_sql_execute' list.id %}" type="button" class="btn btn-default btn-xs">
+                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Do
+                                    </a>
+                                    <a href="{% url 'sql_review_reject_to_dev' list.id %}" type="button" class="btn btn-default btn-xs">
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Reject
+                                    </a>
+                                </td>
                             </tr>
                         {% endfor %}
                         </tbody>

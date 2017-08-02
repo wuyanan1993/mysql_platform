@@ -6,7 +6,7 @@ import json
 from MySQLdb.constants.CLIENT import MULTI_STATEMENTS, MULTI_RESULTS
 from django.http.response import HttpResponse, HttpResponseRedirect
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect, reverse
 from django.views import View
 from django.core import serializers
 
@@ -56,6 +56,28 @@ def review(request, record_id):
         return render(request, 'sql_review/result.html', data)
     except MySQLdb.Error as e:
         return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
+
+
+def submit_to_pm(request):
+    record_id = request.POST.get('record_id', 0)
+    record = SqlReviewRecord.objects.get(id=record_id)
+    record.is_submitted = 1
+    record.save()
+    data = {
+        'status': 'success'
+    }
+    return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+def submit_to_ops(request, record_id):
+    record = SqlReviewRecord.objects.get(id=record_id)
+    record.is_reviewed = 1
+    record.save()
+    return redirect(reverse('sql_review_reviewed_list'))
+
+
+def reject_to_dev(request):
+    return HttpResponseRedirect(request, redirect_to='sql_review_reviewed_list')
 
 
 def message_to_review_sql(host, port, sql, option):
@@ -108,7 +130,7 @@ def instance_by_ajax_and_id(request):
 
 def submitted_list(request):
     # 取出账号权限下所有的审核请求
-    record_list = SqlReviewRecord.objects.filter(is_checked=1).order_by('-id')
+    record_list = SqlReviewRecord.objects.filter(is_checked=1,is_submitted=1,is_reviewed=0).order_by('-id')
     data = {
         'record_list': record_list,
         'sub_module': '2_2'
@@ -131,6 +153,36 @@ def modify_submitted_sql(request):
         'status': 'success'
     }
     return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+def sql_review_before_execute(request, record_id):
+    record = SqlReviewRecord.objects.get(id=record_id)
+    sql = record.sql
+    instance = record.instance
+    instance_ip = instance.ip
+    instance_port = instance.port
+    # 组成一个inception 可以执行的 sql
+    all_the_text = message_to_review_sql(option='--enable-check;--disable-remote-backup;',
+                                         host=instance_ip, port=instance_port, sql=sql)
+    try:
+        conn = MySQLdb.connect(host=INCEPTION_IP, user='', passwd='', db='', port=INCEPTION_PORT,
+                               client_flag=MULTI_STATEMENTS | MULTI_RESULTS)
+        cur = conn.cursor()
+        ret = cur.execute(all_the_text)
+        field_names = [i[0] for i in cur.description]
+        result = cur.fetchall()
+        cur.close()
+        conn.close()
+        data = {
+            'field_names': field_names,
+            'result': result,
+            'sub_module': '2_1',
+            'record_id': record.id,
+            'sql': sql
+        }
+        return render(request, 'sql_review/review_before_execute_result.html', data)
+    except MySQLdb.Error as e:
+        return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
 
 
 def sql_execute(request, record_id):
@@ -192,7 +244,7 @@ def reviewed_list(request):
 
 def finished_list(request):
     # 取出账号权限下所有的执行完成列表
-    record_list = SqlReviewRecord.objects.filter(is_checked=1,is_executed=1).order_by('-id')
+    record_list = SqlReviewRecord.objects.filter(is_checked=1,is_reviewed=1,is_executed=1).order_by('-id')
     data = {
         'record_list': record_list,
         'sub_module': '2_4',
@@ -245,6 +297,7 @@ def dml_sql_in_transaction(host_ip, host_port, user, password, database, sql_lis
         conn.close()
         return 'ok'
     except MySQLdb.Error as e:
+        print('Mysql Error {}: {}'.format(e.args[0], e.args[1]))
         cur.close()
         conn.rollback()
         conn.close()
@@ -275,15 +328,46 @@ def ajax_rollback_by_sequence(request):
         sql = 'select rollback_statement from {} where opid_time = {}'.format(table_name, sequence)
         sql_result = get_sql_result(BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_USER, BACKUP_PASSWORD,
                                     backup_database_name, sql)
-        sql_result = sql_result[0][0]
-        sql_list.append(sql_result)
-    result = dml_sql_in_transaction(host_ip, host_port, user, password, '', sql_list)
+        if sql_result:
+            sql_result = sql_result[0][0]
+            sql_list.append(sql_result)
+    if sql_list:
+        result = dml_sql_in_transaction(host_ip, host_port, user, password, '', sql_list)
+    else:
+        result = 'empty'
     if result == 'ok':
         data = {
             'status': 'success',
+            'message': '成功'
+        }
+    elif result == 'empty':
+        data = {
+            'status': 'empty',
+            'message': '没有需要回滚的语句'
         }
     else:
         data = {
-            'status': 'error'
+            'status': 'error',
+            'message': '回滚语句执行失败'
         }
     return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+def osc_process(request, osc_id):
+    sql = 'inception get osc_percent "{}"'.format(osc_id)
+    try:
+        conn = MySQLdb.connect(host=INCEPTION_IP, user='', passwd='', db='', port=INCEPTION_PORT,
+                               client_flag=MULTI_STATEMENTS | MULTI_RESULTS)
+        cur = conn.cursor()
+        ret = cur.execute(sql)
+        result = cur.fetchall()
+        cur.close()
+        conn.close()
+        data = {
+            'result': result
+        }
+        print(result)
+        # return render(request, 'sql_review/review_before_execute_result.html', data)
+        return HttpResponse('ok', status=200)
+    except MySQLdb.Error as e:
+        return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)

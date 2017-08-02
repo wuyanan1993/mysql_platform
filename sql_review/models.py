@@ -19,6 +19,7 @@ class SqlReviewRecord(models.Model):
     execute_time = models.DateTimeField(verbose_name=u'要求执行的时间', null=False, blank=False)
     sql = models.TextField(verbose_name=u'想要执行的SQL', null=False, blank=False)
     is_checked = models.BooleanField(verbose_name=u'是否通过代码审核', default=0)
+    is_submitted = models.BooleanField(verbose_name=u'是否提交至审核', default=0)
     is_reviewed = models.BooleanField(verbose_name=u'是否项目经理审核', default=0)
     is_executed = models.BooleanField(verbose_name=u'是否执行完成', default=0)
 

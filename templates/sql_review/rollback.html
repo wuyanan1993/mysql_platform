@@ -122,11 +122,7 @@
                     xhr.setRequestHeader("X-CSRFToken", csrf);
                 },
                 success: function (data) {
-                    if(data.status === 'success'){
-                        alert('回滚成功')
-                    }else{
-                        alert('回滚失败')
-                    }
+                    alert(data.message)
                 }
             });
         }

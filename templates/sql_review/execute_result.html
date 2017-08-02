@@ -61,36 +61,10 @@
                         {% endfor %}
                         </tbody>
                     </table>
-                    <a href="{% url 'sql_review_sql_execute' record_id %}" type="button" class="btn btn-orange-2" style="float: right;margin-top: 10px"
+                    <a href="{% url 'sql_review_rollback' record_id %}" type="button" class="btn btn-orange-2" style="float: right;margin-top: 10px"
                             data-toggle="tooltip" data-placement="left"
-                            title="注意：点击之后便会执行或到对应时间自动执行">提交执行
+                            title="注意：DDL语句回滚操作，请重新提交SQL进行回滚">回滚
                     </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">修改SQL</h4>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label for="modified-sql" class="control-label">新的SQL:</label>
-                            <textarea class="form-control" id="modified-sql" rows="15">{{ sql }}</textarea>
-                            {% csrf_token %}
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary save-changes" data-record-id="{{ record_id }}">Save changes</button>
                 </div>
             </div>
         </div>
