@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from sql_review.views import review, StepView, instance_by_ajax_and_id, submitted_list, modify_submitted_sql
 from sql_review.views import sql_execute, finished_list, rollback, reviewed_list, ajax_rollback_by_sequence, \
-    submit_to_pm, submit_to_ops, reject_to_dev, sql_review_before_execute, osc_process
+    submit_to_pm, submit_to_ops, reject_to_dev, sql_review_before_execute, osc_process, ajax_osc_percent
 
 urlpatterns = [
     url(r'^review_result/(?P<record_id>[0-9]+)/', review, name='sql_review_review_result'),
@@ -35,4 +35,5 @@ urlpatterns = [
     url(r'^roll_back/(?P<record_id>[0-9]+)/', rollback, name='sql_review_rollback'),
     url(r'^ajax_rollback_by_sequence/', ajax_rollback_by_sequence, name='sql_review_ajax_rollback_by_sequence'),
     url(r'^osc_process/(?P<osc_id>.*)/', osc_process, name='sql_review_osc_process'),
+    url(r'^ajax_osc_percent/(?P<osc_id>.*)/', ajax_osc_percent, name='sql_review_ajax_osc_percent'),
 ]

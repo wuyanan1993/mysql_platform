@@ -363,11 +363,71 @@ def osc_process(request, osc_id):
         result = cur.fetchall()
         cur.close()
         conn.close()
-        data = {
-            'result': result
-        }
+        if result:
+            result = tuple_to_dict(result[0], ('schema_name', 'table_name', 'sqlsha1', 'percent',
+                                               'remain_time', 'info'))
+            data = {
+                'result': result,
+                'osc_id': osc_id
+            }
+        else:
+            result = {
+                'schema_name': 'Empty',
+                'table_name': 'Empty',
+                'sqlsha1': osc_id,
+                'percent': 'Empty',
+                'remain_time': 'Empty',
+                'info': 'Empty!!!',
+            }
+            data = {
+                'result': result,
+                'osc_id': osc_id
+            }
         print(result)
         # return render(request, 'sql_review/review_before_execute_result.html', data)
-        return HttpResponse('ok', status=200)
+        return render(request, 'sql_review/osc_process.html', data)
     except MySQLdb.Error as e:
         return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
+
+
+def tuple_to_dict(tuple_arg, name):
+    dict_arg = {}
+    for index, arg in enumerate(name):
+        dict_arg[arg] = tuple_arg[index]
+    return dict_arg
+
+
+def ajax_osc_percent(request, osc_id):
+    sql = 'inception get osc_percent "{}"'.format(osc_id)
+    try:
+        conn = MySQLdb.connect(host=INCEPTION_IP, user='', passwd='', db='', port=INCEPTION_PORT,
+                               client_flag=MULTI_STATEMENTS | MULTI_RESULTS)
+        cur = conn.cursor()
+        ret = cur.execute(sql)
+        result = cur.fetchall()
+        cur.close()
+        conn.close()
+        if result:
+            result = tuple_to_dict(result[0], ('schema_name', 'table_name', 'sqlsha1', 'percent',
+                                               'remain_time', 'info'))
+            result['info'] = result['info'].replace('\n', '<br ''/>')
+            data = {
+                'status': 'success',
+                'process': result['percent'],
+                'info': result
+            }
+        else:
+            result = {
+                'remain_time': '00:00',
+                'info': 'Empty!!!'
+            }
+            data = {
+                'status': 'empty',
+                'process': 100,
+                'info': result
+
+            }
+        return HttpResponse(json.dumps(data), content_type='application/json')
+    except MySQLdb.Error as e:
+        print(HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500))
+        return HttpResponse(json.dumps({'status': 'failed'}), content_type='application/json')
