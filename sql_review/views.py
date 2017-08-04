@@ -16,6 +16,8 @@ from statistics.models import MysqlInstance, MysqlInstanceGroup
 from sql_review.models import SqlReviewRecord, SqlBackupRecord
 from sql_review.forms import SqlReviewRecordForm
 
+from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
+
 # Create your views here.
 
 
@@ -130,9 +132,20 @@ def instance_by_ajax_and_id(request):
 
 def submitted_list(request):
     # 取出账号权限下所有的审核请求
-    record_list = SqlReviewRecord.objects.filter(is_checked=1,is_submitted=1,is_reviewed=0).order_by('-id')
+    try:
+        page = int(request.GET.get('page', 1))
+        if page < 1:
+            page = 1
+    except ValueError:
+        page = 1
+    record_list = SqlReviewRecord.objects.filter(is_checked=1, is_submitted=1).order_by('-id')
+    p = Paginator(record_list, 10, request=request)
+    try:
+        record_list_in_pages = p.page(page)
+    except EmptyPage:
+        record_list_in_pages = p.page(1)
     data = {
-        'record_list': record_list,
+        'record_list': record_list_in_pages,
         'sub_module': '2_2'
     }
     return render(request, 'sql_review/record_list.html', data)
@@ -223,7 +236,7 @@ def sql_execute(request, record_id):
         data = {
             'field_names': field_names,
             'result': result,
-            'sub_module': '2_1',
+            'sub_module': '2_4',
             'record_id': record.id,
             'sql': sql
         }
@@ -234,9 +247,20 @@ def sql_execute(request, record_id):
 
 def reviewed_list(request):
     # 取出账号权限下所有的项目经理审核完成列表
-    record_list = SqlReviewRecord.objects.filter(is_checked=1, is_reviewed=1).order_by('-id')
+    try:
+        page = int(request.GET.get('page', 1))
+        if page < 1:
+            page = 1
+    except ValueError:
+        page = 1
+    record_list = SqlReviewRecord.objects.filter(is_checked=1, is_reviewed=1, is_executed=0).order_by('-id')
+    p = Paginator(record_list, 10, request=request)
+    try:
+        record_list_in_pages = p.page(page)
+    except EmptyPage:
+        record_list_in_pages = p.page(1)
     data = {
-        'record_list': record_list,
+        'record_list': record_list_in_pages,
         'sub_module': '2_3',
     }
     return render(request, 'sql_review/reviewed_list.html', data)
@@ -244,9 +268,20 @@ def reviewed_list(request):
 
 def finished_list(request):
     # 取出账号权限下所有的执行完成列表
+    try:
+        page = int(request.GET.get('page', 1))
+        if page < 1:
+            page = 1
+    except ValueError:
+        page = 1
     record_list = SqlReviewRecord.objects.filter(is_checked=1,is_reviewed=1,is_executed=1).order_by('-id')
+    p = Paginator(record_list, 10, request=request)
+    try:
+        record_list_in_pages = p.page(page)
+    except EmptyPage:
+        record_list_in_pages = p.page(1)
     data = {
-        'record_list': record_list,
+        'record_list': record_list_in_pages,
         'sub_module': '2_4',
     }
     return render(request, 'sql_review/finished_list.html', data)
@@ -258,15 +293,21 @@ def rollback(request, record_id):
         backup_db = obj.backup_db_name
         sequence = obj.sequence
         sql = 'select * from $_$Inception_backup_information$_$ where `opid_time` = {}'.format(sequence)
-        result = get_sql_result(BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_USER, BACKUP_PASSWORD,
-                                backup_db,
-                                sql)
+        result = get_sql_result(BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_USER, BACKUP_PASSWORD, backup_db, sql)
         rollback_list[idx].sql = result[0][5]
         rollback_list[idx].db_host = result[0][6]
         rollback_list[idx].db_name = result[0][7]
         rollback_list[idx].db_table_name = result[0][8]
+        rollback_sql = 'select `rollback_statement` from {} where `opid_time` = {}'.format(result[0][8], sequence)
+        rollback_result = get_sql_result(BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_USER, BACKUP_PASSWORD, backup_db,
+                                         rollback_sql)
+        rollback_statement = str()
+        for statement in rollback_result:
+            rollback_statement += '{}<br/>'.format(statement[0])
+        rollback_list[idx].rollback_statement = rollback_statement
     data = {
-        'rollback_list': rollback_list
+        'rollback_list': rollback_list,
+        'sub_module': '2_4'
     }
     return render(request, 'sql_review/rollback.html', data)
 
@@ -368,7 +409,8 @@ def osc_process(request, osc_id):
                                                'remain_time', 'info'))
             data = {
                 'result': result,
-                'osc_id': osc_id
+                'osc_id': osc_id,
+                'sub_module': '2_4'
             }
         else:
             result = {
@@ -381,7 +423,8 @@ def osc_process(request, osc_id):
             }
             data = {
                 'result': result,
-                'osc_id': osc_id
+                'osc_id': osc_id,
+                'sub_module': '2_4',
             }
         print(result)
         # return render(request, 'sql_review/review_before_execute_result.html', data)

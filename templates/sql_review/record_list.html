@@ -8,7 +8,7 @@
 {% endblock %}
 {% load filters %}
 {% block content %}
-    <div class="col-md-12" >
+    <div class="col-md-12">
         <div class="widget">
             <div class="widget-header transparent">
                 <h2><strong>已提交</strong> 列表</h2>
@@ -39,7 +39,7 @@
                         </thead>
 
                         <tbody>
-                        {% for list in record_list %}
+                        {% for list in record_list.object_list %}
                             <tr>
                                 <td align="center">{{ list.id }}</td>
                                 <td align="center">{{ list.for_what }}</td>
@@ -56,32 +56,40 @@
                                 </td>
                                 <td align="center">
                                     {% if list.is_checked == 1 %}
-                                        <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: limegreen;"></span>
+                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"
+                                              style="color: limegreen;"></span>
                                     {% else %}
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span>
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"
+                                              style="color: red;"></span>
                                     {% endif %}
                                 </td>
                                 <td align="center">
                                     {% if list.is_reviewed == 1 %}
-                                        <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: limegreen;"></span>
+                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"
+                                              style="color: limegreen;"></span>
                                     {% else %}
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span>
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"
+                                              style="color: red;"></span>
                                     {% endif %}
                                 </td>
                                 <td align="center">
                                     {% if list.is_executed == 1 %}
-                                        <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: limegreen;"></span>
+                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"
+                                              style="color: limegreen;"></span>
                                     {% else %}
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span>
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"
+                                              style="color: red;"></span>
                                     {% endif %}
                                 </td>
                                 <td align="center">{{ list.instance.name }}</td>
                                 <td align="center">{{ list.instance_group.name }}</td>
                                 <td>
-                                    <a href="{% url 'sql_review_submit_to_ops' list.id %}" type="button" class="btn btn-default btn-xs">
+                                    <a href="{% url 'sql_review_submit_to_ops' list.id %}" type="button"
+                                       class="btn btn-default btn-xs">
                                         <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Pass
                                     </a>
-                                    <a href="{% url 'sql_review_reject_to_dev' list.id %}" type="button" class="btn btn-default btn-xs">
+                                    <a href="{% url 'sql_review_reject_to_dev' list.id %}" type="button"
+                                       class="btn btn-default btn-xs">
                                         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Reject
                                     </a>
                                 </td>
@@ -89,6 +97,33 @@
                         {% endfor %}
                         </tbody>
                     </table>
+                    <div class="dataTables_paginate paging_bootstrap pull-right" id="datatables-1_paginate">
+                        <ul class="pagination">
+                            {% if record_list.has_previous %}
+                                <li ><a href="?{{ record_list.previous_page_number.querystring }}">上一页</a>
+                                </li>
+                            {% else %}
+                                <li class="prev disabled"><a>首页</a>
+                                </li>
+                            {% endif %}
+                            {% for page in record_list.pages %}
+                                {% if page %}
+                                    {% ifequal page record_list.number %}
+                                        <li class="active"><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                                    {% else %}
+                                        <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
+                                    {% endifequal %}
+                                {% else %}
+                                    <li ><a href="">...</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if record_list.has_next %}
+                                <li ><a href="?{{ record_list.next_page_number.querystring }}">下一页</a></li>
+                            {% else %}
+                                <li class="prev disabled"><a>尾页</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

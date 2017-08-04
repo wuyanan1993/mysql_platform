@@ -59,9 +59,13 @@
                                         </td>
                                     {% elif forloop.counter == 11 %}
                                         <td align="center">
-                                            <a type="button" class="btn btn-xs btn-info" href="{% url 'sql_review_osc_process' foo %}" target="_blank">
-                                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-                                            </a>
+                                            {% if foo %}
+                                                <a type="button" class="btn btn-xs btn-info" href="{% url 'sql_review_osc_process' foo %}" target="_blank">
+                                                    <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                                </a>
+                                            {% else %}
+                                                非DDL无法查看
+                                            {% endif %}
                                         </td>
                                     {% else %}
                                         <td align="center">{{ foo }}</td>

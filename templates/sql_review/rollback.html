@@ -34,7 +34,7 @@
                             <th style="text-align: center">数据表</th>
                             <th style="text-align: center">SQL</th>
                             <th style="text-align: center">sql_sha1</th>
-                            <th style="text-align: center">回滚？</th>
+                            <th style="text-align: center">回滚SQL</th>
                         </tr>
                         </thead>
 
@@ -72,9 +72,13 @@
                                     {{ list.sql_sha1 }}
                                 </td>
                                 <td align="center">
-                                    <a href="">
-                                        <span class="glyphicon glyphicon-ok" aria-hidden="true" ></span>
-                                    </a>
+                                    <button type="button" class="btn btn-xs btn-info"
+                                            data-html="true" data-placement="left"
+                                            data-toggle="popover" title="SQL"
+                                            data-content="{{ list.rollback_statement }}"
+                                            style="border-radius: 5px">
+                                        SQL
+                                    </button>
                                 </td>
                             </tr>
                         {% endfor %}

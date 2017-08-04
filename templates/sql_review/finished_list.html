@@ -38,7 +38,7 @@
                         </thead>
 
                         <tbody>
-                        {% for list in record_list %}
+                        {% for list in record_list.object_list %}
                             <tr>
                                 <td align="center">{{ list.id }}</td>
                                 <td align="center">{{ list.for_what }}</td>
@@ -86,6 +86,33 @@
                         {% endfor %}
                         </tbody>
                     </table>
+                    <div class="dataTables_paginate paging_bootstrap pull-right" id="datatables-1_paginate">
+                        <ul class="pagination">
+                            {% if record_list.has_previous %}
+                                <li ><a href="?{{ record_list.previous_page_number.querystring }}">上一页</a>
+                                </li>
+                            {% else %}
+                                <li class="prev disabled"><a>首页</a>
+                                </li>
+                            {% endif %}
+                            {% for page in record_list.pages %}
+                                {% if page %}
+                                    {% ifequal page record_list.number %}
+                                        <li class="active"><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                                    {% else %}
+                                        <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
+                                    {% endifequal %}
+                                {% else %}
+                                    <li ><a href="">...</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if record_list.has_next %}
+                                <li ><a href="?{{ record_list.next_page_number.querystring }}">下一页</a></li>
+                            {% else %}
+                                <li class="prev disabled"><a>尾页</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

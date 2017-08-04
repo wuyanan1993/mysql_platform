@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'sql_review',
     'statistics',
+    'pure_pagination'
 ]
 
 MIDDLEWARE = [
@@ -129,12 +130,20 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "templates/corporate/assets"),
 )
 
+# for inception settings
 INCEPTION_IP = '172.16.169.131'
 INCEPTION_PORT = 6666
 
+# for inception backup settings
 BACKUP_HOST_IP = '172.16.169.131'
 BACKUP_HOST_PORT = 3306
 BACKUP_USER = 'root'
 BACKUP_PASSWORD = 'mysql*()'
 
+# for pagination settings
+PAGINATION_SETTINGS = {
+    'PAGE_RANGE_DISPLAYED': 2,
+    'MARGIN_PAGES_DISPLAYED': 2,
+    'SHOW_FIRST_PAGE_WHEN_INVALID': True,
+}
 
