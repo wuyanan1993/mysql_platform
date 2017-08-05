@@ -31,33 +31,53 @@
 
                         <tbody>
                         {% for res in result %}
-                            <tr>
-                                {% for foo in res %}
-                                    {% if forloop.counter == 5 %}
-                                        <td>
-                                            {% if foo != 'None' %}
-                                                <button type="button" class="btn btn-xs btn-danger"
-                                                        data-html="true" data-placement="left"
-                                                        data-toggle="popover" title="Error Message"
-                                                        data-content="{{ foo| linenumbers | linebreaks }}">error message
+                            {% with class=forloop.counter %}
+                                <tr>
+                                    {% for foo in res %}
+                                        {% if forloop.counter == 5 %}
+                                            <td>
+                                                {% if foo != 'None' %}
+                                                    <button type="button" class="btn btn-xs btn-danger"
+                                                            data-html="true" data-placement="left"
+                                                            data-toggle="popover" title="Error Message"
+                                                            data-content="{{ foo| linenumbers | linebreaks }}">error message
+                                                    </button>
+                                                {% else %}
+                                                    None
+                                                {% endif %}
+                                            </td>
+                                        {% elif forloop.counter == 6 %}
+                                            <td>
+                                                <button type="button" class="btn btn-xs btn-info" data-toggle="modal"
+                                                        data-target="#{{ class }}sqlModal"
+                                                        title="所审核SQL" >SQL
                                                 </button>
-                                            {% else %}
-                                                None
-                                            {% endif %}
-                                        </td>
-                                    {% elif forloop.counter == 6 %}
-                                        <td>
-                                            <button type="button" class="btn btn-xs btn-info" data-toggle="popover"
-                                                    data-placement="top"
-                                                    title="所审核SQL" data-content="{{ foo }}">SQL
-                                            </button>
-                                        </td>
-                                    {% else %}
-                                        <td>{{ foo }}</td>
-                                    {% endif %}
+                                            </td>
+                                            <div class="modal fade" id="{{ class }}sqlModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                                    aria-hidden="true">&times;</span></button>
+                                                            <h4 class="modal-title" id="myModalLabel">查看SQL</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            {{ foo | linenumbers | linebreaks }}
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <td>{{ foo }}</td>
+                                        {% endif %}
 
-                                {% endfor %}
-                            </tr>
+                                    {% endfor %}
+                                </tr>
+                            {% endwith %}
+
                         {% endfor %}
                         </tbody>
                     </table>
@@ -74,7 +94,6 @@
 {% endblock %}
 {% block js %}
     <script>
-        $('td button').popover();
         $('[data-toggle="tooltip"]').tooltip();
         $('.save-changes').on('click', function () {
             $(this).attr('disabled', 'disabled');

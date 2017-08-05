@@ -18,6 +18,12 @@ from sql_review.forms import SqlReviewRecordForm
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
+import logging
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s '
+                                                '%(message)s', datefmt='%Y-%m-%d %H:%M:%S',
+                    filename='./public/my_app.log', filemode='w')
+
 # Create your views here.
 
 
@@ -89,6 +95,7 @@ inception_magic_start;
 """ + sql + """
 inception_magic_commit;    
     """
+    logging.info('生成审核语句: {}'.format(review_sql))
     return review_sql
 
 
@@ -189,7 +196,7 @@ def sql_review_before_execute(request, record_id):
         data = {
             'field_names': field_names,
             'result': result,
-            'sub_module': '2_1',
+            'sub_module': '2_4',
             'record_id': record.id,
             'sql': sql
         }
@@ -268,6 +275,7 @@ def reviewed_list(request):
 
 def finished_list(request):
     # 取出账号权限下所有的执行完成列表
+    logging.error('sssss')
     try:
         page = int(request.GET.get('page', 1))
         if page < 1:
@@ -321,27 +329,31 @@ def get_sql_result(host_ip, host_port, user, password, database, sql):
         result = cur.fetchall()
         cur.close()
         conn.close()
+        logging.info('获取数据sql: {}'.format(sql))
         return result
     except MySQLdb.Error as e:
         return 'error'
 
 
 def dml_sql_in_transaction(host_ip, host_port, user, password, database, sql_list):
+    logging.info('数据回滚开始')
     conn = MySQLdb.connect(host=host_ip, user=user, passwd=password, db=database, port=host_port,
                            client_flag=MULTI_STATEMENTS | MULTI_RESULTS)
     cur = conn.cursor()
     try:
         for sql in sql_list:
             cur.execute(sql)
+            logging.info('数据回滚sql: {}'.format(sql))
         cur.close()
         conn.commit()
         conn.close()
+        logging.info('数据回滚成功')
         return 'ok'
     except MySQLdb.Error as e:
-        print('Mysql Error {}: {}'.format(e.args[0], e.args[1]))
         cur.close()
         conn.rollback()
         conn.close()
+        logging.info('数据回滚失败: Mysql Error {}: {}'.format(e.args[0], e.args[1]))
         return 'error'
 
 
@@ -370,8 +382,8 @@ def ajax_rollback_by_sequence(request):
         sql_result = get_sql_result(BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_USER, BACKUP_PASSWORD,
                                     backup_database_name, sql)
         if sql_result:
-            sql_result = sql_result[0][0]
-            sql_list.append(sql_result)
+            for single_sql in sql_result:
+                sql_list.append(single_sql[0])
     if sql_list:
         result = dml_sql_in_transaction(host_ip, host_port, user, password, '', sql_list)
     else:

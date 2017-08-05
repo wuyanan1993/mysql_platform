@@ -40,6 +40,23 @@
 
                         <tbody>
                         {% for list in record_list.object_list %}
+                            <div class="modal fade" id="{{ list.id }}sqlModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                    aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" id="myModalLabel">查看SQL</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            {{ list.sql | linenumbers | linebreaks }}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <tr>
                                 <td align="center">{{ list.id }}</td>
                                 <td align="center">{{ list.for_what }}</td>
@@ -47,12 +64,11 @@
                                 <td align="center">{{ list.execute_time }}</td>
                                 <td align="center">
                                     <button type="button" class="btn btn-xs btn-info"
-                                            data-html="true" data-placement="left"
-                                            data-toggle="popover" title="SQL"
-                                            data-content="{{ list.sql | linebreaks }}"
+                                            data-toggle="modal" data-target="#{{ list.id }}sqlModal" title="所审核SQL"
                                             style="border-radius: 5px">
                                         SQL
                                     </button>
+
                                 </td>
                                 <td align="center">
                                     {% if list.is_checked == 1 %}
@@ -133,6 +149,5 @@
 {% endblock %}
 {% block js %}
     <script>
-        $('td button').popover();
     </script>
 {% endblock %}
