@@ -33,71 +33,103 @@
                             <th style="text-align: center">数据库名</th>
                             <th style="text-align: center">数据表</th>
                             <th style="text-align: center">SQL</th>
-                            <th style="text-align: center">sql_sha1</th>
                             <th style="text-align: center">回滚SQL</th>
+                            <th style="text-align: center">sql_sha1</th>
                         </tr>
                         </thead>
 
                         <tbody>
-                        {% for list in rollback_list %}
-                            <tr>
-                                <td>
-                                    <input type="checkbox" class="single-checkbox" data-sequence="{{ list.sequence }}">
-                                </td>
-                                <td align="center">{{ list.id }}</td>
-                                <td align="center">{{ list.review_record_id }}</td>
+                            {% for list in rollback_list %}
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" class="single-checkbox" data-sequence="{{ list.sequence }}">
+                                    </td>
+                                    <td align="center">{{ list.id }}</td>
+                                    <td align="center">{{ list.review_record_id }}</td>
 
+                                    <td align="center">
+                                        {{ list.sequence }}
+                                    </td>
+                                    <td align="center">
+                                        {{ list.db_host }}
+                                    </td>
+                                    <td align="center">
+                                        {{ list.db_name }}
+                                    </td>
+                                    <td align="center">
+                                        {{ list.db_table_name }}
+                                    </td>
+                                    <td align="center">
+                                        <button type="button" class="btn btn-xs btn-info" data-toggle="modal"
+                                                            data-target="#{{ list.id }}sqlModal"
+                                                            title="所审核SQL"
+                                                style="border-radius: 5px">
+                                            SQL
+                                        </button>
+                                    </td>
+                                    <td align="center">
+                                        <button type="button" class="btn btn-xs btn-info" data-toggle="modal"
+                                                            data-target="#{{ list.id }}sqlRollbackModal"
+                                                            title="回滚SQL"
+                                                style="border-radius: 5px">
+                                            SQL
+                                        </button>
+                                    </td>
+                                    <td align="center">
+                                        {{ list.sql_sha1 }}
+                                    </td>
+                                </tr>
+                                <div class="modal fade" id="{{ list.id }}sqlModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                        aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalLabel">查看SQL</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                {{ list.sql }}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal fade" id="{{ list.id }}sqlRollbackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                        aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalLabel">查看回滚SQL</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                {{ list.rollback_statement | linebreaks }}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                                 <td align="center">
-                                    {{ list.sequence }}
+                                    <a type="button" class="btn btn-primary btn-sm rollbackselect" data-user="">回滚所选</a>
                                 </td>
                                 <td align="center">
-                                    {{ list.db_host }}
-                                </td>
-                                <td align="center">
-                                    {{ list.db_name }}
-                                </td>
-                                <td align="center">
-                                    {{ list.db_table_name }}
-                                </td>
-                                <td align="center">
-                                    <button type="button" class="btn btn-xs btn-info"
-                                            data-html="true" data-placement="left"
-                                            data-toggle="popover" title="SQL"
-                                            data-content="{{ list.sql | linebreaks }}"
-                                            style="border-radius: 5px">
-                                        SQL
-                                    </button>
-                                </td>
-                                <td align="center">
-                                    {{ list.sql_sha1 }}
-                                </td>
-                                <td align="center">
-                                    <button type="button" class="btn btn-xs btn-info"
-                                            data-html="true" data-placement="left"
-                                            data-toggle="popover" title="SQL"
-                                            data-content="{{ list.rollback_statement }}"
-                                            style="border-radius: 5px">
-                                        SQL
-                                    </button>
+                                    <a type="button" class="btn btn-primary btn-sm rollbackall" data-user="{% for rollback in rollback_list %}{{ rollback.sequence }},{% endfor %}">回滚全部</a>
                                 </td>
                             </tr>
-                        {% endfor %}
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td align="center">
-                                <a type="button" class="btn btn-primary btn-sm rollbackselect" data-user="">回滚所选</a>
-                            </td>
-                            <td align="center">
-                                <a type="button" class="btn btn-primary btn-sm rollbackall" data-user="{% for rollback in rollback_list %}{{ rollback.sequence }},{% endfor %}">回滚全部</a>
-                            </td>
-                        </tr>
                         </tbody>
                         {% csrf_token %}
                     </table>
@@ -110,7 +142,6 @@
 {% endblock %}
 {% block js %}
     <script>
-        $('td button').popover();
         function rollback(sequence_data){
             var csrf = $('[name="csrfmiddlewaretoken"]').val();
             $.ajax({

@@ -311,7 +311,7 @@ def rollback(request, record_id):
                                          rollback_sql)
         rollback_statement = str()
         for statement in rollback_result:
-            rollback_statement += '{}<br/>'.format(statement[0])
+            rollback_statement += '{}\n'.format(statement[0])
         rollback_list[idx].rollback_statement = rollback_statement
     data = {
         'rollback_list': rollback_list,
