@@ -125,6 +125,7 @@
 {% endblock %}
 {% block js %}
     <script>
+        $('[title="Error Message"]').popover();
         $('[data-toggle="tooltip"]').tooltip();
         $('.save-changes').on('click', function () {
             $(this).attr('disabled', 'disabled');

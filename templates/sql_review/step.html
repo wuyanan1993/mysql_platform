@@ -35,16 +35,14 @@
                             </div>
                             <div class="col-sm-6">
                                 <div class="notes">
-                                    <h4><strong>Warning</strong> tips:</h4>
+                                    <h4><strong>审查规范</strong> tips:</h4>
                                     <p style="text-align: justify">
                                         SQL 执行规范化是一个艰难且持久的过程
                                     </p>
                                     <ol>
-                                        <li>Duis autem vel eum iriure dolor in hendrerit in vulputate</li>
-                                        <li>Lorem ipsum dolor sit amet</li>
-                                        <li>Sed diam nonummy nibh euismod tincidunt</li>
-                                        <li>Sonsectetuer adipiscing elit</li>
-                                        <li>Tincidunt ut laoreet dolore magna aliquam erat volutpat</li>
+                                        {% for content in dict_content.content1 %}
+                                            <li>{{ content.content }}</li>
+                                        {% endfor %}
                                     </ol>
                                     <p style="text-align: justify">
                                         Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
@@ -70,19 +68,14 @@
                             </div>
                             <div class="col-sm-6">
                                 <div class="notes">
-                                    <h4><strong>Example</strong> note</h4>
+                                    <h4><strong>审查规范</strong> tips:</h4>
                                     <p style="text-align: justify">
-                                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
-                                        euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad
-                                        minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut
-                                        aliquip ex ea commodo consequat.
+                                        SQL 执行规范化是一个艰难且持久的过程
                                     </p>
                                     <ol>
-                                        <li>Duis autem vel eum iriure dolor in hendrerit in vulputate</li>
-                                        <li>Lorem ipsum dolor sit amet</li>
-                                        <li>Sed diam nonummy nibh euismod tincidunt</li>
-                                        <li>Sonsectetuer adipiscing elit</li>
-                                        <li>Tincidunt ut laoreet dolore magna aliquam erat volutpat</li>
+                                        {% for content in dict_content.content2 %}
+                                            <li>{{ content.content }}</li>
+                                        {% endfor %}
                                     </ol>
                                     <p style="text-align: justify">
                                         Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
@@ -106,19 +99,14 @@
                             </div>
                             <div class="col-sm-6">
                                 <div class="notes">
-                                    <h4><strong>Example</strong> note</h4>
+                                    <h4><strong>审查规范</strong> tips:</h4>
                                     <p style="text-align: justify">
-                                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
-                                        euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad
-                                        minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut
-                                        aliquip ex ea commodo consequat.
+                                        SQL 执行规范化是一个艰难且持久的过程
                                     </p>
                                     <ol>
-                                        <li>Duis autem vel eum iriure dolor in hendrerit in vulputate</li>
-                                        <li>Lorem ipsum dolor sit amet</li>
-                                        <li>Sed diam nonummy nibh euismod tincidunt</li>
-                                        <li>Sonsectetuer adipiscing elit</li>
-                                        <li>Tincidunt ut laoreet dolore magna aliquam erat volutpat</li>
+                                        {% for content in dict_content.content3 %}
+                                            <li>{{ content.content }}</li>
+                                        {% endfor %}
                                     </ol>
                                     <p style="text-align: justify">
                                         Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh

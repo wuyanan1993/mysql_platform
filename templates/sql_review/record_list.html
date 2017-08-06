@@ -108,6 +108,10 @@
                                        class="btn btn-default btn-xs">
                                         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Reject
                                     </a>
+                                    <a href="{% url 'sql_review_pm_review_result' list.id %}" type="button"
+                                       class="btn btn-default btn-xs">
+                                        <span class="glyphicon glyphicon-check" aria-hidden="true"></span> Check
+                                    </a>
                                 </td>
                             </tr>
                         {% endfor %}

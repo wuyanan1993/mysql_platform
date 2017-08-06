@@ -13,7 +13,7 @@ from django.core import serializers
 from mysql_platform.settings import INCEPTION_IP, INCEPTION_PORT, BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_PASSWORD
 from mysql_platform.settings import BACKUP_USER
 from statistics.models import MysqlInstance, MysqlInstanceGroup
-from sql_review.models import SqlReviewRecord, SqlBackupRecord
+from sql_review.models import SqlReviewRecord, SqlBackupRecord, SpecificationContentForSql, SpecificationTypeForSql
 from sql_review.forms import SqlReviewRecordForm
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
@@ -66,6 +66,44 @@ def review(request, record_id):
         return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
 
 
+def review_result_to_human_read(result):
+    for idx, res in enumerate(result):
+        # TODO: 将审核结果做汉化 Audit completed 为审核完成 此功能由于返回结果tuple不能做修改，未完成
+        if res[3] == 'Audit completed':
+            result[idx][3] = '审核完成'
+    return result
+
+
+def pm_review(request, record_id):
+    record = SqlReviewRecord.objects.get(id=record_id)
+    sql = record.sql
+    instance = record.instance
+    instance_ip = instance.ip
+    instance_port = instance.port
+    all_the_text = message_to_review_sql(option='--enable-check;--disable-remote-backup;', host=instance_ip,
+                                         port=instance_port, sql=sql)
+    try:
+        conn = MySQLdb.connect(host=INCEPTION_IP, user='', passwd='', db='', port=INCEPTION_PORT,
+                               client_flag=MULTI_STATEMENTS | MULTI_RESULTS)
+        cur = conn.cursor()
+        ret = cur.execute(all_the_text)
+        num_fields = len(cur.description)
+        field_names = [i[0] for i in cur.description]
+        result = cur.fetchall()
+        cur.close()
+        conn.close()
+        data = {
+            'field_names': field_names,
+            'result': result,
+            'sub_module': '2_1',
+            'record_id': record.id,
+            'sql': sql
+        }
+        return render(request, 'sql_review/pm_review_result.html', data)
+    except MySQLdb.Error as e:
+        return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
+
+
 def submit_to_pm(request):
     record_id = request.POST.get('record_id', 0)
     record = SqlReviewRecord.objects.get(id=record_id)
@@ -102,10 +140,20 @@ inception_magic_commit;
 class StepView(View):
     def get(self, request):
         instance_groups = MysqlInstanceGroup.objects.all()
+        specification_type = SpecificationTypeForSql.objects.order_by('?')[0:3]
+        content = []
+        for idx, s_type in enumerate(specification_type):
+            content.append(SpecificationContentForSql.objects.filter(type=s_type.id).order_by('?')[0:10])
+        dict_content = {
+            'content1': content[0],
+            'content2': content[1],
+            'content3': content[2]
+        }
         data = {
             'sub_module': '2_1',
             'instance_groups': instance_groups,
-            'start_time': datetime.now().strftime('%Y-%m-%d %H:%M')
+            'start_time': datetime.now().strftime('%Y-%m-%d %H:%M'),
+            'dict_content': dict_content
         }
         return render(request, 'sql_review/step.html', data)
 

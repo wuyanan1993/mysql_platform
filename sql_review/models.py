@@ -37,3 +37,26 @@ class SqlBackupRecord(models.Model):
                                 null=False, blank=False)
     backup_db_name = models.CharField(max_length=40, default='', null=False, blank=False, verbose_name=u'备份数据库名')
     sql_sha1 = models.CharField(max_length=50, default='', null=True, blank=True, verbose_name=u'如果是osc，会有此值')
+
+
+class SpecificationTypeForSql(models.Model):
+    type = models.CharField(max_length=20, verbose_name=u'规范类型', null=False, blank=False, default=u'公共检查项')
+
+    def __str__(self):
+        return '{}'.format(self.type)
+
+    class Meta:
+        verbose_name = u'SQL规范类型'
+        verbose_name_plural = verbose_name
+
+
+class SpecificationContentForSql(models.Model):
+    type = models.ForeignKey(SpecificationTypeForSql, null=False, blank=False)
+    content = models.CharField(max_length=255, verbose_name=u'规范内容', null=False, blank=False, default=u'0')
+
+    def __str__(self):
+        return '{}--{}'.format(self.type, self.content)
+
+    class Meta:
+        verbose_name = u'SQL规范内容'
+        verbose_name_plural = verbose_name
