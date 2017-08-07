@@ -70,6 +70,8 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                        {% elif forloop.counter == 4 %}
+                                            <td>{{ foo | format_stage_status }}</td>
                                         {% else %}
                                             <td>{{ foo }}</td>
                                         {% endif %}
@@ -81,7 +83,9 @@
                         {% endfor %}
                         </tbody>
                     </table>
-                    <a href="{% url 'sql_review_rollback' record_id %}" type="button" class="btn btn-orange-2" style="float: right;margin-top: 10px"
+                    <a href="{% url 'sql_review_rollback' record_id %}" type="button" class="{% if flag == 'failed'%}
+                        disabled
+                    {% endif %}btn btn-orange-2" style="float: right;margin-top: 10px"
                             data-toggle="tooltip" data-placement="left"
                             title="注意：DDL语句回滚操作，请重新提交SQL进行回滚">回滚
                     </a>
@@ -94,32 +98,7 @@
 {% endblock %}
 {% block js %}
     <script>
+        $('[data-toggle="popover"]').popover();
         $('[data-toggle="tooltip"]').tooltip();
-        $('.save-changes').on('click', function () {
-            $(this).attr('disabled', 'disabled');
-            $(this).html('Loading');
-            var sql = $("#modified-sql").val();
-            var csrf = $('[name="csrfmiddlewaretoken"]').val();
-            var record_id = $(this).attr('data-record-id');
-            $.ajax({
-                type: "POST",
-                url: "{% url 'sql_review_modify_submitted_sql' %}",
-                data: {
-                    'sql': sql,
-                    'record_id': record_id
-                },
-                dataType: 'json',
-                beforeSend: function (xhr, settings) {
-                    xhr.setRequestHeader("X-CSRFToken", csrf);
-                },
-                success: function (data) {
-                    if(data.status === 'success'){
-                        location.href = '/sql_review/review_result/' + data.new_id
-                    }else {
-                        alert('failed')
-                    }
-                }
-            });
-        })
     </script>
 {% endblock %}

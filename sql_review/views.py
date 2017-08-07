@@ -253,15 +253,19 @@ def sql_review_before_execute(request, record_id):
         return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
 
 
-def sql_execute(request, record_id):
+def sql_execute(request, record_id, ignore_flag):
     record = SqlReviewRecord.objects.get(id=record_id)
     sql = record.sql
     instance = record.instance
     instance_ip = instance.ip
     instance_port = instance.port
     # 组成一个inception 可以执行的 sql
-    all_the_text = message_to_review_sql(option='--enable-execute;--enable-remote-backup;',
-                                         host=instance_ip, port=instance_port, sql=sql)
+    if ignore_flag == 'ignore':
+        all_the_text = message_to_review_sql(option='--enable-execute;--enable-remote-backup;--enable-ignore-warnings;',
+                                             host=instance_ip, port=instance_port, sql=sql)
+    else:
+        all_the_text = message_to_review_sql(option='--enable-execute;--enable-remote-backup;',
+                                             host=instance_ip, port=instance_port, sql=sql)
     try:
         conn = MySQLdb.connect(host=INCEPTION_IP, user='', passwd='', db='', port=INCEPTION_PORT,
                                client_flag=MULTI_STATEMENTS | MULTI_RESULTS)
@@ -279,9 +283,10 @@ def sql_execute(request, record_id):
                 sql_backup_instance.sql_sha1 = res[10]
                 sql_backup_instance.save()
         # 判断结果中是否有error level 为 2 的，如果有，则不做操作，如果没有则将 sql_review_record 记录的 is_executed 设为1
+        # 判断结果中是否有error level 为 1 的，如果有，并且忽略标记不为'ignore'，则不做操作，如果有，且忽略标记为'ignore'，则操作和上述一样
         flag = 'success'
         for res in result:
-            if res[2] == 2:
+            if res[2] == 2 or (ignore_flag != 'ignore' and res[2] == 1):
                 flag = 'failed'
         if flag == 'success':
             record.is_executed = 1
@@ -293,11 +298,17 @@ def sql_execute(request, record_id):
             'result': result,
             'sub_module': '2_4',
             'record_id': record.id,
-            'sql': sql
+            'sql': sql,
+            'flag': flag
         }
         return render(request, 'sql_review/execute_result.html', data)
     except MySQLdb.Error as e:
         return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
+
+
+def sql_execute_ignore_warning(request, record_id):
+
+    return 's'
 
 
 def reviewed_list(request):

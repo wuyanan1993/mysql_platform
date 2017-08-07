@@ -70,6 +70,8 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                        {% elif forloop.counter == 4 %}
+                                            <td>{{ foo | format_stage_status }}</td>
                                         {% else %}
                                             <td>{{ foo }}</td>
                                         {% endif %}

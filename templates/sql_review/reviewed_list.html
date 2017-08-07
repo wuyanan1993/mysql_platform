@@ -59,8 +59,8 @@
                             <tr>
                                 <td align="center">{{ list.id }}</td>
                                 <td align="center">{{ list.for_what }}</td>
-                                <td align="center">{{ list.submit_time }}</td>
-                                <td align="center">{{ list.execute_time }}</td>
+                                <td align="center">{{ list.submit_time | date:'y-m-d H:i' }}</td>
+                                <td align="center">{{ list.execute_time | date:'y-m-d H:i' }}</td>
                                 <td align="center">
                                     <button type="button" class="btn btn-xs btn-info"
                                             data-toggle="modal" data-target="#{{ list.id }}sqlModal"

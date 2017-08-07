@@ -70,6 +70,8 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                        {% elif forloop.counter == 4 %}
+                                            <td>{{ foo | format_stage_status }}</td>
                                         {% else %}
                                             <td>{{ foo }}</td>
                                         {% endif %}
@@ -83,9 +85,9 @@
                             data-toggle="tooltip" data-placement="left" href="{% url 'sql_review_reject_to_dev' record_id %}"
                             title="注意：拒绝执行后，相应的开发会收到相关消息">拒绝执行
                     </a>
-                    <a type="button" class="btn btn-orange-2 modify-sql" data-toggle="modal"
+                    <a type="button" class="btn btn-orange-2 modify-sql"
                             style="float: right;margin-top: 10px;margin-right: 10px" href="{% url 'sql_review_submit_to_ops' record_id %}"
-                            data-target="#myModal" >同意执行
+                             >同意执行
                     </a>
 
                 </div>

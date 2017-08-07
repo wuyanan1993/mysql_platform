@@ -85,6 +85,8 @@
                                                     非DDL无法查看
                                                 {% endif %}
                                             </td>
+                                        {% elif forloop.counter == 4 %}
+                                            <td>{{ foo | format_stage_status }}</td>
                                         {% else %}
                                             <td align="center">{{ foo }}</td>
                                         {% endif %}
@@ -95,9 +97,13 @@
                         {% endfor %}
                         </tbody>
                     </table>
-                    <a href="{% url 'sql_review_sql_execute' record_id %}" type="button" class="btn btn-orange-2" style="float: right;margin-top: 10px"
+                    <a href="{% url 'sql_review_sql_execute' 'ignore' record_id %}" type="button" class="btn btn-orange-2" style="float: right;margin: 10px 10px"
                             data-toggle="tooltip" data-placement="left"
-                            title="注意：DDL语句回滚操作，请重新提交SQL进行回滚">执行
+                            title="注意：如无特殊情况，请拒绝忽略warn执行！">忽略warn执行
+                    </a>&nbsp;
+                    <a href="{% url 'sql_review_sql_execute' 'strict' record_id %}" type="button" class="btn btn-orange-2" style="float: right;margin: 10px 10px"
+                            data-toggle="tooltip" data-placement="left"
+                            title="注意：点击后将执行对应SQL">执行
                     </a>
                 </div>
             </div>
