@@ -182,7 +182,7 @@
                         <li class="dropdown topbar-profile">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span
                                     class="rounded-image topbar-profile-image"><img
-                                    src="{% static 'images/users/user-35.jpg' %}"></span> Jane <strong>Doe</strong> <i
+                                    src="{% static 'images/users/user-35.jpg' %}"></span> {{ request.user.username }} <i
                                     class="fa fa-caret-down"></i></a>
                             <ul class="dropdown-menu">
                                 <li><a href="#">My Profile</a></li>
@@ -221,7 +221,7 @@
                             src="{% static 'images/public/ops.bmp' %}"></a>
                 </div>
                 <div class="col-xs-8">
-                    <div class="profile-text">Welcome <b>Jane</b></div>
+                    <div class="profile-text">Hi <b>{{ request.user.username }}</b></div>
                     <div class="profile-buttons">
                         <a href="javascript:;"><i class="fa fa-envelope-o pulse"></i></a>
                         <a href="#connect" class="open-right"><i class="fa fa-comments"></i></a>

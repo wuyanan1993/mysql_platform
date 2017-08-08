@@ -139,6 +139,8 @@ inception_magic_commit;
 
 class StepView(View):
     def get(self, request):
+        if request.user.username == '':
+            return HttpResponse('You have no right to access', status=200)
         instance_groups = MysqlInstanceGroup.objects.all()
         specification_type = SpecificationTypeForSql.objects.order_by('?')[0:3]
         content = []
