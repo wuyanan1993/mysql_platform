@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^statistics/', include('statistics.urls')),
     url(r'^sql_review/', include('sql_review.urls')),
+    url(r'^users/', include('users.urls')),
     url(r'^$', LoginView.as_view(), name='users_login'),
 
 ]

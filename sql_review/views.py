@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from datetime import datetime
+from datetime import datetime, timedelta
 import MySQLdb
 import json
 from MySQLdb.constants.CLIENT import MULTI_STATEMENTS, MULTI_RESULTS
@@ -9,6 +9,7 @@ from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, reverse
 from django.views import View
 from django.core import serializers
+from django.contrib.auth.decorators import login_required
 
 from mysql_platform.settings import INCEPTION_IP, INCEPTION_PORT, BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_PASSWORD
 from mysql_platform.settings import BACKUP_USER
@@ -27,6 +28,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(filename)s[line:%
 # Create your views here.
 
 
+@login_required()
 def review(request, record_id):
     record = SqlReviewRecord.objects.get(id=record_id)
     sql = record.sql
@@ -66,14 +68,6 @@ def review(request, record_id):
         return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
 
 
-def review_result_to_human_read(result):
-    for idx, res in enumerate(result):
-        # TODO: 将审核结果做汉化 Audit completed 为审核完成 此功能由于返回结果tuple不能做修改，未完成
-        if res[3] == 'Audit completed':
-            result[idx][3] = '审核完成'
-    return result
-
-
 def pm_review(request, record_id):
     record = SqlReviewRecord.objects.get(id=record_id)
     sql = record.sql
@@ -104,6 +98,7 @@ def pm_review(request, record_id):
         return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
 
 
+@login_required(identity=('project_manager', 'operation'))
 def submit_to_pm(request):
     record_id = request.POST.get('record_id', 0)
     record = SqlReviewRecord.objects.get(id=record_id)
@@ -137,48 +132,50 @@ inception_magic_commit;
     return review_sql
 
 
-class StepView(View):
-    def get(self, request):
-        if request.user.username == '':
-            return HttpResponse('You have no right to access', status=200)
-        instance_groups = MysqlInstanceGroup.objects.all()
-        specification_type = SpecificationTypeForSql.objects.order_by('?')[0:3]
-        content = []
-        for idx, s_type in enumerate(specification_type):
-            content.append(SpecificationContentForSql.objects.filter(type=s_type.id).order_by('?')[0:10])
-        dict_content = {
-            'content1': content[0],
-            'content2': content[1],
-            'content3': content[2]
-        }
-        data = {
-            'sub_module': '2_1',
-            'instance_groups': instance_groups,
-            'start_time': datetime.now().strftime('%Y-%m-%d %H:%M'),
-            'dict_content': dict_content
-        }
-        return render(request, 'sql_review/step.html', data)
+@login_required(login_url='/users/login/', identity='all')
+def step(request):
+    if request.user.username == '':
+        return HttpResponse('You have no right to access', status=200)
+    instance_groups = MysqlInstanceGroup.objects.all()
+    specification_type = SpecificationTypeForSql.objects.order_by('?')[0:3]
+    content = []
+    for idx, s_type in enumerate(specification_type):
+        content.append(SpecificationContentForSql.objects.filter(type=s_type.id).order_by('?')[0:10])
+    dict_content = {
+        'content1': content[0],
+        'content2': content[1],
+        'content3': content[2]
+    }
+    data = {
+        'sub_module': '2_1',
+        'instance_groups': instance_groups,
+        'start_time': (datetime.now() + timedelta(minutes=30)).strftime('%Y-%m-%d %H:%M'),
+        'dict_content': dict_content
+    }
+    return render(request, 'sql_review/step.html', data)
 
-    def post(self, request):
-        sql_review_form = SqlReviewRecordForm(request.POST)
-        if sql_review_form.is_valid():
-            result = SqlReviewRecord()
-            result.sql = sql_review_form.cleaned_data.get('sql')
-            result.for_what = sql_review_form.cleaned_data.get('for_what')
-            result.instance = sql_review_form.cleaned_data.get('instance')
-            result.instance_group = sql_review_form.cleaned_data.get('instance_group')
-            result.execute_time = sql_review_form.cleaned_data.get('execute_time')
-            result.save()
-            data = {
-                'result': 'success',
-                'result_id': result.id
-            }
-            return HttpResponse(json.dumps(data), content_type='application/json')
-        else:
-            data = {
-                'result': 'error'
-            }
-            return HttpResponse(json.dumps(data), content_type='application/json')
+
+@login_required(login_url='/users/login/', identity='all')
+def submit_step(request):
+    sql_review_form = SqlReviewRecordForm(request.POST)
+    if sql_review_form.is_valid():
+        result = SqlReviewRecord()
+        result.sql = sql_review_form.cleaned_data.get('sql')
+        result.for_what = sql_review_form.cleaned_data.get('for_what')
+        result.instance = sql_review_form.cleaned_data.get('instance')
+        result.instance_group = sql_review_form.cleaned_data.get('instance_group')
+        result.execute_time = sql_review_form.cleaned_data.get('execute_time')
+        result.save()
+        data = {
+            'result': 'success',
+            'result_id': result.id
+        }
+        return HttpResponse(json.dumps(data), content_type='application/json')
+    else:
+        data = {
+            'result': 'error'
+        }
+        return HttpResponse(json.dumps(data), content_type='application/json')
 
 
 def instance_by_ajax_and_id(request):
@@ -187,6 +184,7 @@ def instance_by_ajax_and_id(request):
     return HttpResponse(serializers.serialize("json", instance), content_type='application/json')
 
 
+@login_required(login_url='/users/login/', identity='all')
 def submitted_list(request):
     # 取出账号权限下所有的审核请求
     try:
@@ -420,49 +418,55 @@ def dml_sql_in_transaction(host_ip, host_port, user, password, database, sql_lis
 
 def ajax_rollback_by_sequence(request):
     sequence = request.POST.get('sequence')
-    sequence_list = sorted(sequence.strip(',').split(','), reverse=True)
+    if sequence:
+        sequence_list = sorted(sequence.strip(',').split(','), reverse=True)
     # 获取所有 sequence 的数据库名，进而获取回滚语句
-    record = SqlBackupRecord.objects.get(sequence=sequence_list[0])
-    backup_database_name = record.backup_db_name
-    content = backup_database_name.split('_')
-    host_ip = '{}.{}.{}.{}'.format(content[0], content[1], content[2], content[3])
-    host_port = int(content[4])
-    mysql_instance = MysqlInstance.objects.get(ip=host_ip, port=host_port)
-    user = mysql_instance.login_instance_account
-    password = mysql_instance.login_instance_password
-    sql_list = list()
-    for sequence in sequence_list:
-        record = SqlBackupRecord.objects.get(sequence=sequence)
+        record = SqlBackupRecord.objects.get(sequence=sequence_list[0])
         backup_database_name = record.backup_db_name
+        content = backup_database_name.split('_')
+        host_ip = '{}.{}.{}.{}'.format(content[0], content[1], content[2], content[3])
+        host_port = int(content[4])
+        mysql_instance = MysqlInstance.objects.get(ip=host_ip, port=host_port)
+        user = mysql_instance.login_instance_account
+        password = mysql_instance.login_instance_password
+        sql_list = list()
+        for sequence in sequence_list:
+            record = SqlBackupRecord.objects.get(sequence=sequence)
+            backup_database_name = record.backup_db_name
 
-        sql = 'select tablename from $_$Inception_backup_information$_$ where opid_time = {} limit 1'.format(sequence)
-        result = get_sql_result(BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_USER, BACKUP_PASSWORD,
-                                backup_database_name, sql)
-        table_name = result[0][0]
-        sql = 'select rollback_statement from {} where opid_time = {}'.format(table_name, sequence)
-        sql_result = get_sql_result(BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_USER, BACKUP_PASSWORD,
+            sql = 'select tablename from $_$Inception_backup_information$_$ where opid_time = {} limit 1'.format(sequence)
+            result = get_sql_result(BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_USER, BACKUP_PASSWORD,
                                     backup_database_name, sql)
-        if sql_result:
-            for single_sql in sql_result:
-                sql_list.append(single_sql[0])
-    if sql_list:
-        result = dml_sql_in_transaction(host_ip, host_port, user, password, '', sql_list)
+            table_name = result[0][0]
+            sql = 'select rollback_statement from {} where opid_time = {}'.format(table_name, sequence)
+            sql_result = get_sql_result(BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_USER, BACKUP_PASSWORD,
+                                        backup_database_name, sql)
+            if sql_result:
+                for single_sql in sql_result:
+                    sql_list.append(single_sql[0])
+        if sql_list:
+            result = dml_sql_in_transaction(host_ip, host_port, user, password, '', sql_list)
+        else:
+            result = 'empty'
+        if result == 'ok':
+            data = {
+                'status': 'success',
+                'message': '成功'
+            }
+        elif result == 'empty':
+            data = {
+                'status': 'empty',
+                'message': '没有需要回滚的语句'
+            }
+        else:
+            data = {
+                'status': 'error',
+                'message': '回滚语句执行失败'
+            }
     else:
-        result = 'empty'
-    if result == 'ok':
-        data = {
-            'status': 'success',
-            'message': '成功'
-        }
-    elif result == 'empty':
         data = {
             'status': 'empty',
             'message': '没有需要回滚的语句'
-        }
-    else:
-        data = {
-            'status': 'error',
-            'message': '回滚语句执行失败'
         }
     return HttpResponse(json.dumps(data), content_type='application/json')
 

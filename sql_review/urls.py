@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from sql_review.views import review, StepView, instance_by_ajax_and_id, submitted_list, modify_submitted_sql
+from sql_review.views import review, step, submit_step, instance_by_ajax_and_id, submitted_list, modify_submitted_sql
 from sql_review.views import sql_execute, finished_list, rollback, reviewed_list, ajax_rollback_by_sequence, \
     submit_to_pm, submit_to_ops, reject_to_dev, sql_review_before_execute, osc_process, ajax_osc_percent, \
     pm_review, sql_execute_ignore_warning
@@ -25,8 +25,8 @@ urlpatterns = [
     url(r'^submit_to_pm/', submit_to_pm, name='sql_review_submit_to_pm'),
     url(r'^submit_to_ops/(?P<record_id>[0-9]+)/', submit_to_ops, name='sql_review_submit_to_ops'),
     url(r'^reject_to_dev/(?P<record_id>[0-9]+)/', reject_to_dev, name='sql_review_reject_to_dev'),
-    url(r'^step/', StepView.as_view(), name='sql_review_step'),
-    url(r'^review_list/', StepView.as_view(), name='sql_review_step'),
+    url(r'^step/', submit_step, name='sql_review_submit_step'),
+    url(r'^review_list/', step, name='sql_review_step'),
     url(r'^instance_by_ajax_and_id/', instance_by_ajax_and_id, name='instance_by_ajax_and_id'),
     url(r'^submitted_list/', submitted_list, name='sql_review_submitted_list'),
     url(r'^modify_submitted_sql/', modify_submitted_sql, name='sql_review_modify_submitted_sql'),
