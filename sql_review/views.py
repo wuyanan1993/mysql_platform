@@ -7,7 +7,6 @@ from MySQLdb.constants.CLIENT import MULTI_STATEMENTS, MULTI_RESULTS
 from django.http.response import HttpResponse, HttpResponseRedirect
 
 from django.shortcuts import render, redirect, reverse
-from django.views import View
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
 
@@ -68,6 +67,7 @@ def review(request, record_id):
         return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
 
 
+@login_required(identity=('operation', 'project_manager'))
 def pm_review(request, record_id):
     record = SqlReviewRecord.objects.get(id=record_id)
     sql = record.sql
@@ -98,7 +98,7 @@ def pm_review(request, record_id):
         return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
 
 
-@login_required(identity=('project_manager', 'operation'))
+@login_required()
 def submit_to_pm(request):
     record_id = request.POST.get('record_id', 0)
     record = SqlReviewRecord.objects.get(id=record_id)
@@ -110,6 +110,7 @@ def submit_to_pm(request):
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 
+@login_required(identity=('operation', 'project_manager'))
 def submit_to_ops(request, record_id):
     record = SqlReviewRecord.objects.get(id=record_id)
     record.is_reviewed = 1
@@ -117,6 +118,7 @@ def submit_to_ops(request, record_id):
     return redirect(reverse('sql_review_reviewed_list'))
 
 
+@login_required(identity=('operation', 'project_manager'))
 def reject_to_dev(request):
     return HttpResponseRedirect(request, redirect_to='sql_review_reviewed_list')
 
@@ -132,10 +134,8 @@ inception_magic_commit;
     return review_sql
 
 
-@login_required(login_url='/users/login/', identity='all')
+@login_required()
 def step(request):
-    if request.user.username == '':
-        return HttpResponse('You have no right to access', status=200)
     instance_groups = MysqlInstanceGroup.objects.all()
     specification_type = SpecificationTypeForSql.objects.order_by('?')[0:3]
     content = []
@@ -155,7 +155,7 @@ def step(request):
     return render(request, 'sql_review/step.html', data)
 
 
-@login_required(login_url='/users/login/', identity='all')
+@login_required()
 def submit_step(request):
     sql_review_form = SqlReviewRecordForm(request.POST)
     if sql_review_form.is_valid():
@@ -178,13 +178,14 @@ def submit_step(request):
         return HttpResponse(json.dumps(data), content_type='application/json')
 
 
+@login_required()
 def instance_by_ajax_and_id(request):
     group_id = request.POST.get('group_id', '1')
     instance = MysqlInstance.objects.filter(group=group_id)
     return HttpResponse(serializers.serialize("json", instance), content_type='application/json')
 
 
-@login_required(login_url='/users/login/', identity='all')
+@login_required()
 def submitted_list(request):
     # 取出账号权限下所有的审核请求
     try:
@@ -206,6 +207,7 @@ def submitted_list(request):
     return render(request, 'sql_review/record_list.html', data)
 
 
+@login_required()
 def modify_submitted_sql(request):
     record = SqlReviewRecord.objects.get(id=request.POST.get('record_id'))
     new_sql = request.POST.get('sql', 'select 1')
@@ -223,6 +225,7 @@ def modify_submitted_sql(request):
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 
+@login_required(identity=('operation', ))
 def sql_review_before_execute(request, record_id):
     record = SqlReviewRecord.objects.get(id=record_id)
     sql = record.sql
@@ -253,6 +256,7 @@ def sql_review_before_execute(request, record_id):
         return HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500)
 
 
+@login_required(identity=('operation', ))
 def sql_execute(request, record_id, ignore_flag):
     record = SqlReviewRecord.objects.get(id=record_id)
     sql = record.sql
@@ -311,6 +315,7 @@ def sql_execute_ignore_warning(request, record_id):
     return 's'
 
 
+@login_required(identity=('operation', 'project_manager'))
 def reviewed_list(request):
     # 取出账号权限下所有的项目经理审核完成列表
     try:
@@ -319,7 +324,7 @@ def reviewed_list(request):
             page = 1
     except ValueError:
         page = 1
-    record_list = SqlReviewRecord.objects.filter(is_checked=1, is_reviewed=1, is_executed=0).order_by('-id')
+    record_list = SqlReviewRecord.objects.filter(is_checked=1, is_reviewed=1).order_by('-id')
     p = Paginator(record_list, 10, request=request)
     try:
         record_list_in_pages = p.page(page)
@@ -332,9 +337,9 @@ def reviewed_list(request):
     return render(request, 'sql_review/reviewed_list.html', data)
 
 
+@login_required(identity=('operation', ))
 def finished_list(request):
     # 取出账号权限下所有的执行完成列表
-    logging.error('sssss')
     try:
         page = int(request.GET.get('page', 1))
         if page < 1:
@@ -354,6 +359,7 @@ def finished_list(request):
     return render(request, 'sql_review/finished_list.html', data)
 
 
+@login_required(identity=('operation', ))
 def rollback(request, record_id):
     rollback_list = SqlBackupRecord.objects.filter(review_record_id=record_id)
     for idx, obj in enumerate(rollback_list):
@@ -416,6 +422,7 @@ def dml_sql_in_transaction(host_ip, host_port, user, password, database, sql_lis
         return 'error'
 
 
+@login_required(identity=('operation', ))
 def ajax_rollback_by_sequence(request):
     sequence = request.POST.get('sequence')
     if sequence:
@@ -471,6 +478,7 @@ def ajax_rollback_by_sequence(request):
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 
+@login_required(identity=('operation', ))
 def osc_process(request, osc_id):
     sql = 'inception get osc_percent "{}"'.format(osc_id)
     try:
@@ -517,6 +525,7 @@ def tuple_to_dict(tuple_arg, name):
     return dict_arg
 
 
+@login_required(identity=('operation', ))
 def ajax_osc_percent(request, osc_id):
     sql = 'inception get osc_percent "{}"'.format(osc_id)
     try:
@@ -551,3 +560,18 @@ def ajax_osc_percent(request, osc_id):
     except MySQLdb.Error as e:
         print(HttpResponse('Mysql Error {}: {}'.format(e.args[0], e.args[1]), status=500))
         return HttpResponse(json.dumps({'status': 'failed'}), content_type='application/json')
+
+
+@login_required()
+def more_specification(request):
+    specification_type = SpecificationTypeForSql.objects.all()
+    all_list = []
+    for idx, types in enumerate(specification_type):
+        tmp_dict = dict()
+        tmp_dict['types'] = types
+        tmp_dict['content'] = types.specificationcontentforsql_set.all()
+        all_list.append(tmp_dict)
+    data = {
+        'all_list': all_list
+    }
+    return render(request, 'sql_review/specification.html', data)

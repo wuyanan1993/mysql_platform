@@ -1,0 +1,36 @@
+{% extends 'base/base.html' %}
+{% block title %}
+    优朋普乐数据库管理平台-SQL审核
+{% endblock %}
+{% block heading %}
+    <h1><i class='fa fa-file'></i> SQL 规范</h1>
+    <h3>基于 Inception 开发，集SQL审核、自动备份、在线修改表结构等功能为一体的DB运维工具</h3>
+{% endblock %}
+{% block content %}
+    {% for all in all_list %}
+        <div class="col-sm-6 portlets">
+            <div class="widget">
+                <div class="widget-header ">
+                    <h2>{{ all.types.type }}</h2>
+                    <div class="additional-btn">
+                        <a href="#" class="hidden reload"><i class="icon-ccw-1"></i></a>
+                        <a href="#" class="widget-toggle"><i class="icon-down-open-2"></i></a>
+                        <a href="#" class="widget-close"><i class="icon-cancel-3"></i></a>
+                    </div>
+                </div>
+                <div class="widget-content padding">
+                    <ol>
+                        {% for content in all.content %}
+                            <li>
+                                {{ content.content  }}
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+
+
+{% endblock %}
