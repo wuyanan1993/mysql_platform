@@ -572,6 +572,7 @@ def more_specification(request):
         tmp_dict['content'] = types.specificationcontentforsql_set.all()
         all_list.append(tmp_dict)
     data = {
-        'all_list': all_list
+        'all_list': all_list,
+        'sub_module': '2_5'
     }
     return render(request, 'sql_review/specification.html', data)
