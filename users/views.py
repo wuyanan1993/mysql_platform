@@ -3,13 +3,15 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, redirect, reverse
 from django.http.response import HttpResponse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.hashers import make_password
 from django.db.models import Q
 from django.views import View
-from forms import LoginForm
+from django.contrib.auth.decorators import login_required
 
+from forms import LoginForm
+from utils.send_email import send_user_email
 
 from models import UserProfile
 
@@ -26,10 +28,17 @@ class CustomBackend(ModelBackend):
 
 class LoginView(View):
     def get(self, request):
-        data = {
+        if request.user.is_anonymous.value:
+            data = {
 
-        }
-        return render(request, "users/login.html", data)
+            }
+            return render(request, "users/login.html", data)
+        else:
+            callback_url = request.GET.get('next')
+            if callback_url:
+                return redirect(callback_url)
+            else:
+                return redirect(reverse('statistics_topology'))
 
     def post(self, request):
         login_form = LoginForm(request.POST)
@@ -60,3 +69,17 @@ class LoginView(View):
                 "login_form": login_form
             }
             return render(request, "users/login.html", data)
+
+
+@login_required()
+def my_logout(request):
+    logout(request)
+    data = {
+
+    }
+    return render(request, "users/login.html", data)
+
+
+def test_email(request):
+    send_user_email('173776778@qq.com', 'register')
+    return HttpResponse('ok', status=200)

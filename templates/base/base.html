@@ -189,7 +189,7 @@
                                 <li class="divider"></li>
                                 <li><a href="#"><i class="icon-help-2"></i> Help</a></li>
                                 <li><a href="lockscreen.html"><i class="icon-lock-1"></i> Lock me</a></li>
-                                <li><a class="md-trigger" data-modal="logout-modal"><i class="icon-logout-1"></i> Logout</a>
+                                <li><a class="md-trigger" href="{% url 'users_logout' %}"><i class="icon-logout-1"></i> Logout</a>
                                 </li>
                             </ul>
                         </li>
@@ -223,7 +223,7 @@
                     <div class="profile-buttons">
                         <a href="javascript:;"><i class="fa fa-envelope-o pulse"></i></a>
                         <a href="#connect" class="open-right"><i class="fa fa-comments"></i></a>
-                        <a href="javascript:;" title="Sign Out"><i class="fa fa-power-off text-red-1"></i></a>
+                        <a href="{% url 'users_logout' %}" title="Sign Out"><i class="fa fa-power-off text-red-1"></i></a>
                     </div>
                 </div>
             </div>

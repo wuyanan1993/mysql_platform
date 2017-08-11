@@ -154,3 +154,12 @@ PAGINATION_SETTINGS = {
     'SHOW_FIRST_PAGE_WHEN_INVALID': True,
 }
 
+# for email settings
+
+EMAIL_HOST = 'mail.voole.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'wuyanan@voole.com'
+EMAIL_HOST_PASSWORD = '199323Wyn'
+EMAIL_USE_TLS = False
+EMAIL_FROM = "wuyanan@voole.com"
+
