@@ -34,11 +34,12 @@ class LoginView(View):
             }
             return render(request, "users/login.html", data)
         else:
-            callback_url = request.GET.get('next')
-            if callback_url:
-                return redirect(callback_url)
-            else:
-                return redirect(reverse('statistics_topology'))
+            # 以下代码会导致循环重定向
+            # callback_url = request.GET.get('next')
+            # if callback_url:
+            #     return redirect(callback_url)
+            # else:
+            return redirect(reverse('statistics_topology'))
 
     def post(self, request):
         login_form = LoginForm(request.POST)

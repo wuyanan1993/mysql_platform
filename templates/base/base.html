@@ -282,20 +282,25 @@
                                     <span>已提交</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href='{% url 'sql_review_reviewed_list' %}' class="{% if sub_module == "2_3" %}
-                                    active
-                                {% endif %}">
-                                    <span>已审核</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href='{% url 'sql_review_finished_list' %}' class="{% if sub_module == "2_4" %}
-                                    active
-                                {% endif %}">
-                                    <span>已完成</span>
-                                </a>
-                            </li>
+                            {% if request.user.identity == 'operation' or request.user.identity == 'project_manager' %}
+                                <li>
+                                    <a href='{% url 'sql_review_reviewed_list' %}' class="{% if sub_module == "2_3" %}
+                                        active
+                                    {% endif %}">
+                                        <span>已审核</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if request.user.identity == 'operation' %}
+                                <li>
+                                    <a href='{% url 'sql_review_finished_list' %}' class="{% if sub_module == "2_4" %}
+                                        active
+                                    {% endif %}">
+                                        <span>已完成</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+
                             <li>
                                 <a href='{% url 'sql_review_more_specification' %}' class="{% if sub_module == "2_5" %}
                                     active
