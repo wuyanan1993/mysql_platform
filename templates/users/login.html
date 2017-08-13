@@ -103,13 +103,13 @@
                 <form method="post" role="form" action="{% url 'users_login' %}">
                     <div class="form-group login-input">
                         <i class="fa fa-user overlay"></i>
-                        <input type="text" name="username" class="form-control text-input" placeholder="Username">
+                        <input type="text" value="{{ username }}" name="username" class="form-control text-input" placeholder="Username">
                     </div>
                     <div class="form-group login-input">
                         <i class="fa fa-key overlay"></i>
-                        <input type="password" name="password" class="form-control text-input" placeholder="********">
-                        {{ error_message }}
-
+                        <input type="password" value="{{ password }}" name="password" class="form-control text-input" placeholder="********">
+                        <br>
+                        <code>{{ msg }}</code>
                     </div>
 
                     <div class="row">

@@ -15,6 +15,8 @@ from utils.send_email import send_user_email
 
 from models import UserProfile
 
+from utils.log import my_logger
+
 
 class CustomBackend(ModelBackend):
     def authenticate(self, username=None, password=None, **kwargs):
@@ -50,11 +52,15 @@ class LoginView(View):
             if user is not None:
                 if user.is_active:
                     login(request, user)
+                    my_logger(level='info', message='登陆成功', username=request.user.name, path=request.path)
                     return redirect(reverse('statistics_topology'))
                 else:
                     data = {
-                        'msg': u'用户未激活'
+                        'msg': u'用户未激活',
+                        "username": username,
+                        "password": password,
                     }
+                    my_logger(level='warning', message='未激活用户登陆尝试', username=username, path=request.path)
                     return render(request, "users/login.html", data)
             else:
                 data = {
@@ -62,6 +68,7 @@ class LoginView(View):
                     "username": username,
                     "password": password,
                 }
+                my_logger(level='warning', message='错误账号密码登陆尝试', username=username, path=request.path)
                 return render(request, "users/login.html", data)
         else:
             data = {
