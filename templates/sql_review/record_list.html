@@ -99,19 +99,29 @@
                                 </td>
                                 <td align="center">{{ list.instance.name }}</td>
                                 <td align="center">{{ list.instance_group.name }}</td>
-                                <td>
-                                    <a href="{% url 'sql_review_submit_to_ops' list.id %}" type="button"
-                                       class="btn btn-default btn-xs">
-                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Pass
-                                    </a>
-                                    <a href="{% url 'sql_review_reject_to_dev' list.id %}" type="button"
-                                       class="btn btn-default btn-xs">
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Reject
-                                    </a>
-                                    <a href="{% url 'sql_review_pm_review_result' list.id %}" type="button"
-                                       class="btn btn-default btn-xs">
-                                        <span class="glyphicon glyphicon-check" aria-hidden="true"></span> Check
-                                    </a>
+                                <td align="center">
+                                {#  pm的审核权限，非开发有 #}
+                                    {% if request.user.identity != 'developer' %}
+                                        <a href="{% url 'sql_review_submit_to_ops' list.id %}" type="button"
+                                           class="btn btn-default btn-xs">
+                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Pass
+                                        </a>
+                                        <a href="{% url 'sql_review_reject_to_dev' list.id %}" type="button"
+                                           class="btn btn-default btn-xs">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Reject
+                                        </a>
+
+                                        <a href="{% url 'sql_review_pm_review_result' list.id %}" type="button"
+                                           class="btn btn-default btn-xs">
+                                            <span class="glyphicon glyphicon-check" aria-hidden="true"></span> Check
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'sql_review_mail_to_pm' list.id %}" type="button"
+                                           class="btn btn-default btn-xs">
+                                            <span class="glyphicon glyphicon-send" aria-hidden="true"></span> 催pm审核
+                                        </a>
+                                    {% endif %}
+
                                 </td>
                             </tr>
                         {% endfor %}

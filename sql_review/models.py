@@ -13,6 +13,7 @@ sys.setdefaultencoding('utf-8')
 
 class SqlReviewRecord(models.Model):
     for_what = models.CharField(max_length=255, verbose_name=u'执行sql的目的')
+    user_name = models.CharField(max_length=30, verbose_name=u'申请人', null=False, blank=False, default='system')
     instance_group = models.ForeignKey(MysqlInstanceGroup, verbose_name=u'实例组', null=False, blank=False)
     instance = models.ForeignKey(MysqlInstance, verbose_name=u'对应组内的具体实例', null=False, blank=False)
     submit_time = models.DateTimeField(verbose_name=u'提交请求的时间', auto_now=True)

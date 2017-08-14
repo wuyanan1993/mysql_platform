@@ -25,6 +25,7 @@
                         <tr>
                             <th style="text-align: center">ID</th>
                             <th style="text-align: center">执行用途</th>
+                            <th style="text-align: center">提交用户</th>
                             <th style="text-align: center">提交时间</th>
                             <th style="text-align: center">执行时间</th>
                             <th style="text-align: center">SQL</th>
@@ -59,6 +60,7 @@
                             <tr>
                                 <td align="center">{{ list.id }}</td>
                                 <td align="center">{{ list.for_what }}</td>
+                                <td align="center">{{ list.user_name }}</td>
                                 <td align="center">{{ list.submit_time | date:'y-m-d H:i' }}</td>
                                 <td align="center">{{ list.execute_time | date:'y-m-d H:i' }}</td>
                                 <td align="center">
@@ -91,13 +93,20 @@
                                 </td>
                                 <td align="center">{{ list.instance.name }}</td>
                                 <td align="center">{{ list.instance_group.name }}</td>
-                                <td>
-                                    <a href="{% url 'sql_review_sql_review_before_execute' list.id %}" type="button" class="btn btn-default btn-xs">
-                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Do
-                                    </a>
-                                    <a href="{% url 'sql_review_reject_to_dev' list.id %}" type="button" class="btn btn-default btn-xs">
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Reject
-                                    </a>
+                                <td align="center">
+                                    {% if request.user.identity != 'project_manager' %}
+                                        <a href="{% url 'sql_review_sql_review_before_execute' list.id %}" type="button" class="btn btn-default btn-xs">
+                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Do
+                                        </a>
+                                        <a href="{% url 'sql_review_reject_to_dev' list.id %}" type="button" class="btn btn-default btn-xs">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Reject
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'sql_review_mail_to_oper' list.id %}" type="button"
+                                           class="btn btn-default btn-xs">
+                                            <span class="glyphicon glyphicon-send" aria-hidden="true"></span> 催oper执行
+                                        </a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}

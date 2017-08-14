@@ -18,13 +18,6 @@ from sql_review.forms import SqlReviewRecordForm
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
-import logging
-
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s '
-                                                '%(message)s', datefmt='%Y-%m-%d %H:%M:%S',
-                    filename='./public/my_app.log', filemode='w')
-
-# Create your views here.
 
 
 @login_required()
@@ -130,7 +123,6 @@ inception_magic_start;
 """ + sql + """
 inception_magic_commit;    
     """
-    logging.info('生成审核语句: {}'.format(review_sql))
     return review_sql
 
 
@@ -165,6 +157,7 @@ def submit_step(request):
         result.instance = sql_review_form.cleaned_data.get('instance')
         result.instance_group = sql_review_form.cleaned_data.get('instance_group')
         result.execute_time = sql_review_form.cleaned_data.get('execute_time')
+        result.user_name = request.user.username
         result.save()
         data = {
             'result': 'success',
@@ -394,31 +387,26 @@ def get_sql_result(host_ip, host_port, user, password, database, sql):
         result = cur.fetchall()
         cur.close()
         conn.close()
-        logging.info('获取数据sql: {}'.format(sql))
         return result
     except MySQLdb.Error as e:
         return 'error'
 
 
 def dml_sql_in_transaction(host_ip, host_port, user, password, database, sql_list):
-    logging.info('数据回滚开始')
     conn = MySQLdb.connect(host=host_ip, user=user, passwd=password, db=database, port=host_port,
                            client_flag=MULTI_STATEMENTS | MULTI_RESULTS)
     cur = conn.cursor()
     try:
         for sql in sql_list:
             cur.execute(sql)
-            logging.info('数据回滚sql: {}'.format(sql))
         cur.close()
         conn.commit()
         conn.close()
-        logging.info('数据回滚成功')
         return 'ok'
     except MySQLdb.Error as e:
         cur.close()
         conn.rollback()
         conn.close()
-        logging.info('数据回滚失败: Mysql Error {}: {}'.format(e.args[0], e.args[1]))
         return 'error'
 
 
@@ -576,3 +564,12 @@ def more_specification(request):
         'sub_module': '2_5'
     }
     return render(request, 'sql_review/specification.html', data)
+
+
+def mail_to_pm(request, record_id):
+    # 给对应项目经理发邮件，以及站内信通知其审核sql
+    return 's'
+
+
+def mail_to_oper(request, record_id):
+    return 's'
