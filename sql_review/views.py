@@ -18,6 +18,7 @@ from sql_review.forms import SqlReviewRecordForm
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
+from utils.log import my_logger
 
 
 @login_required()
@@ -359,12 +360,14 @@ def rollback(request, record_id):
         backup_db = obj.backup_db_name
         sequence = obj.sequence
         sql = 'select * from $_$Inception_backup_information$_$ where `opid_time` = {}'.format(sequence)
+        my_logger(level='info', message='执行SQL：' + sql, username=request.user.name, path=request.path)
         result = get_sql_result(BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_USER, BACKUP_PASSWORD, backup_db, sql)
         rollback_list[idx].sql = result[0][5]
         rollback_list[idx].db_host = result[0][6]
         rollback_list[idx].db_name = result[0][7]
         rollback_list[idx].db_table_name = result[0][8]
         rollback_sql = 'select `rollback_statement` from {} where `opid_time` = {}'.format(result[0][8], sequence)
+        my_logger(level='info', message='执行获取回滚SQL：' + rollback_sql, username=request.user.name, path=request.path)
         rollback_result = get_sql_result(BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_USER, BACKUP_PASSWORD, backup_db,
                                          rollback_sql)
         rollback_statement = str()
