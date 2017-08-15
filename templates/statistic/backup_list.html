@@ -1,0 +1,141 @@
+{% extends 'base/base.html' %}
+{% load staticfiles %}
+{% block extra_static_files %}
+    <link href="{% static 'assets/libs/jquery-nestable/jquery.nestable.css' %}" rel="stylesheet" type="text/css"/>
+    <style>
+        ul, li {
+            list-style-type: none;
+        }
+
+        #treeView {
+            width: 600px;
+            margin: 20px auto 0;
+            border: 1px solid #f2f2f2;
+        }
+
+        .treeNode {
+            height: 32px;
+            border: 1px solid #fff;
+            border-width: 1px 0;
+            cursor: pointer;
+            font-size: 0;
+        }
+
+        .treeNode:hover {
+            background: #f4f9fd;
+            border-color: #e5f0fb;
+        }
+
+        .treeNode-cur,
+        .treeNode-cur:hover {
+            background: #e5f0fb;
+            border-color: #BBD4EF #fff;
+        }
+
+        .icon {
+            display: inline-block;
+            background: url({% static 'assets/js/tree/icon.png' %}) no-repeat;
+            vertical-align: middle;
+        }
+
+        .icon-minus {
+            width: 15px;
+            height: 15px;
+            margin: 0 4px;
+            background-position: -30px -22px;
+        }
+
+        .icon-add {
+            width: 15px;
+            height: 15px;
+            margin: 0 4px;
+            background-position: -30px 0;
+        }
+
+        .icon-file {
+            width: 22px;
+            height: 18px;
+            margin-right: 5px;
+            background-position: 0 -22px;
+        }
+
+        .title {
+            position: relative;
+            top: 6px;
+            font-size: 14px;
+        }
+
+        .treeNode-empty .icon-minus {
+            background-position: -999px -999px;
+        }
+
+        .treeNode-empty .icon-add {
+            background-position: -999px -999px;
+        }
+
+        #treeView ul.none {
+            display: none;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="col-md-6">
+        <div class="widget">
+
+            <div class="widget-header">
+                <h2>Sortable List with icons</h2>
+                <div class="additional-btn">
+                    <a href="#" class="widget-toggle"><i class="icon-down-open-2"></i></a>
+                    <a href="#" class="widget-close"><i class="icon-cancel-3"></i></a>
+                </div>
+            </div>
+            <div class="widget-content" >
+                <div id="treeView" style="padding-right: 40px;padding-bottom: 10px;padding-top: 10px; margin-top: 10px">
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'assets/libs/jquery-icheck/icheck.min.js' %}"></script>
+    <script src="{% static 'assets/libs/jquery-nestable/jquery.nestable.js' %}"></script>
+    <script src="{% static 'assets/js/pages/nested-list.js' %}"></script>
+    <script >
+        {% for instance in all_instance %}
+            var data = {
+                files: [
+                {
+                    id: 0,
+                    pid: -1,
+                    title: '全部文件'
+                },
+
+            {% for dir in instance.dirs %}
+                {
+                    id: {{ dir.id }},
+                    pid: {{ dir.pid }},
+                    title: '{{ dir.title }}'
+                },
+            {% endfor %}
+            {% for file in instance.files %}
+                {
+                    id: {{ file.id }},
+                    pid: {{ file.pid }},
+                    title: '{{ file.title }}'
+                },
+            {% endfor %}
+
+
+                ]
+            };
+        {% endfor %}
+
+
+    </script>
+    <script src='{% static 'assets/js/tree/tools.js' %}'></script>
+    <script src='{% static 'assets/js/tree/handledata.js' %}'></script>
+    <script src='{% static 'assets/js/tree/index.js' %}'></script>
+{% endblock %}

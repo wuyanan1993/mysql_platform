@@ -60,3 +60,20 @@ class InstanceRelation(models.Model):
     class Meta:
         verbose_name = u'Mysql 主从关系'
         verbose_name_plural = verbose_name
+
+
+class BackupInstance(models.Model):
+    name = models.CharField(max_length=20, null=False, blank=False, verbose_name=u'实例名称')
+    ip = models.GenericIPAddressField(null=False, blank=False, verbose_name='IP')
+    port = models.IntegerField(null=False, blank=False, default=22, verbose_name=u'实例ssh端口')
+    login_instance_account = models.CharField(max_length=20, null=False, blank=False,
+                                              default='root', verbose_name=u'登陆实例账号')
+    login_instance_password = models.CharField(max_length=20, null=False, blank=False, verbose_name=u'登陆实例密码')
+
+    def __str__(self):
+        return '{}'.format(self.name)
+
+    class Meta:
+        verbose_name = u'Mysql 备份实例'
+        verbose_name_plural = verbose_name
+        unique_together = ('ip', 'port')

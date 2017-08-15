@@ -370,8 +370,10 @@
                         </a>
                         <ul>
                             <li>
-                                <a href='index.html'>
-                                    <span>Dashboard v1</span>
+                                <a href='{% url 'statistics_backup_list' %}' class="{% if sub_module == "5_1" %}
+                                    active
+                                {% endif %}">
+                                    <span>数据备份</span>
                                 </a>
                             </li>
                             <li>
