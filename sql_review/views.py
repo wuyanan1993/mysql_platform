@@ -273,7 +273,7 @@ def sql_execute(request, record_id, ignore_flag):
         result = cur.fetchall()
         # 判断结果中是否有执行成功的状态，如果有则将备份信息存入表中，等待给以后做回滚
         for res in result:
-            if res[1] == 'EXECUTED' and res[2] == 0:
+            if res[1] == 'EXECUTED' and (res[2] == 0 or res[2] == 1):
                 sql_backup_instance = SqlBackupRecord()
                 sql_backup_instance.review_record_id = record_id
                 sql_backup_instance.backup_db_name = res[8]
