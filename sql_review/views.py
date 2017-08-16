@@ -366,7 +366,7 @@ def rollback(request, record_id):
         rollback_list[idx].db_host = result[0][6]
         rollback_list[idx].db_name = result[0][7]
         rollback_list[idx].db_table_name = result[0][8]
-        rollback_sql = 'select * `rollback_statement` from {} where `opid_time` = {}'.format(result[0][8], sequence)
+        rollback_sql = 'select  `rollback_statement` from {} where `opid_time` = {}'.format(result[0][8], sequence)
         my_logger(level='info', message='执行获取回滚SQL：' + rollback_sql, username=request.user.name, path=request.path)
         rollback_result = get_sql_result(BACKUP_HOST_IP, BACKUP_HOST_PORT, BACKUP_USER, BACKUP_PASSWORD, backup_db,
                                          rollback_sql)
