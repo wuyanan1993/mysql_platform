@@ -109,7 +109,9 @@
                         <i class="fa fa-key overlay"></i>
                         <input type="password" value="{{ password }}" name="password" class="form-control text-input" placeholder="********">
                         <br>
-                        <code>{{ msg }}</code>
+                        {% if msg %}
+                            <code>{{ msg }}</code>
+                        {% endif %}
                     </div>
 
                     <div class="row">

@@ -1,0 +1,117 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <div class="col-sm-12 portlets">
+
+        <div class="widget">
+            <div class="widget-header transparent">
+                <h2><strong>请填写以下</strong> 表单</h2>
+                <div class="additional-btn">
+                    <a href="#" class="hidden reload"><i class="icon-ccw-1"></i></a>
+                    <a href="#" class="widget-toggle"><i class="icon-down-open-2"></i></a>
+                    <a href="#" class="widget-close"><i class="icon-cancel-3"></i></a>
+                </div>
+            </div>
+            <div class="widget-content padding">
+                <div id="horizontal-form">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label for="inputUsername" class="col-sm-1 control-label">用户名</label>
+                            <div class="col-sm-5">
+                                <input type="email" class="form-control" id="inputUsername" placeholder="用户名">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputEmail" class="col-sm-1 control-label">邮箱</label>
+                            <div class="col-sm-5">
+                                <div class="input-group">
+                                    <input type="text" name="email" id="inputEmail" class="form-control"
+                                           placeholder="公司邮箱名">
+                                    <span class="input-group-addon">@voole.com</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword" class="col-sm-1 control-label">密码</label>
+                            <div class="col-sm-5">
+                                <input type="password" class="form-control" id="inputPassword" placeholder="密码">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-1 control-label">姓名</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" id="name" placeholder="姓名">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="identity" class="col-sm-1 control-label">角色</label>
+                            <div class="col-sm-5">
+                                <select class="form-control" name="identity" id="identity">
+                                    <option value="">-- 选择角色 --</option>
+                                    <option value="developer">开发</option>
+                                    <option value="project_manager">项目经理</option>
+                                    <option value="operation">运维</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="mobile_phone" class="col-sm-1 control-label">手机</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" name="mobile_phone" id="mobile_phone" placeholder="手机">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-1 col-sm-1">
+                                <button type="submit" class="btn btn-default" id="submit">确认添加</button>
+                            </div>
+                            <div class="col-sm-1">
+                                <button type="reset" class="btn btn-default">重置</button>
+                            </div>
+                        </div>
+                        {% csrf_token %}
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block heading %}
+    <h1><i class='fa fa-table'></i> 添加用户</h1>
+    <h3>根据需求添加用户</h3>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $('#submit').on('click', function(){
+            var username = $('#inputUsername').val();
+            var email = $('#inputEmail').val();
+            var password = $('#inputPassword').val();
+            var name = $('#name').val();
+            var identity = $('#identity').val();
+            var mobile_phone = $('#mobile_phone').val();
+            var csrf = $('[name="csrfmiddlewaretoken"]').val();
+            $.ajax({
+                    type: "POST",
+                    url: "{% url 'users_deal_user_add' %}",
+                    data: {
+                        'username': username,
+                        'email': email,
+                        'password': password,
+                        'name': name,
+                        'identity': identity,
+                        'mobile_phone': mobile_phone
+                    },
+                    dataType: 'json',
+                    beforeSend: function (xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", csrf);
+                    },
+                    success: function (data) {
+                        alert(data.result_content)
+                    }
+                });
+            return false
+        })
+    </script>
+{% endblock %}

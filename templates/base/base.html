@@ -75,18 +75,18 @@
 
                     <ul class="nav navbar-nav navbar-right top-navbar">
                         <li class="dropdown iconify hide-phone">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-globe"></i><span
-                                    class="label label-danger absolute">4</span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-bell-2"></i><span
+                                    class="label label-danger absolute">5</span></a>
                             <ul class="dropdown-menu dropdown-message">
                                 <li class="dropdown-header notif-header"><i class="icon-bell-2">
 
-                                </i>New Notifications
+                                </i>新通知
                                 </li>
                                 <li class="unread">
                                     <a href="#">
-                                        <p><strong>John Doe</strong> Uploaded a photo
-                                            <strong>&#34;DSC000254.jpg&#34;</strong>
-                                            <br/><i>2 minutes ago</i>
+                                        <p><strong>吴亚楠</strong> 执行了相应的sql
+                                            <strong>&#34;for test&#34;</strong>
+                                            <br/><i>2 分钟前</i>
                                         </p>
                                     </a>
                                 </li>
@@ -108,6 +108,10 @@
                                 <li>
                                     <a href="#">
                                         <p><strong>Sonata Arctica</strong> Send you a message <strong>&#34;Lorem ipsum
+                                            dolor...Lorem ipsum
+                                            dolor...Lorem ipsum
+                                            dolor...Lorem ipsum
+                                            dolor...Lorem ipsum
                                             dolor...&#34;</strong>
                                             <br/><i>12 hours ago</i>
                                         </p>
@@ -138,43 +142,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="dropdown iconify hide-phone">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
-                                    class="fa fa-envelope"></i><span class="label label-danger absolute">3</span></a>
-                            <ul class="dropdown-menu dropdown-message">
-                                <li class="dropdown-header notif-header"><i class="icon-mail-2"></i> New Messages</li>
-                                <li class="unread">
-                                    <a href="#" class="clearfix">
-                                        <img src="{% static 'images/users/chat/2.jpg' %}" class="xs-avatar ava-dropdown"
-                                             alt="Avatar">
-                                        <strong>John Doe</strong><i class="pull-right msg-time">5 minutes ago</i><br/>
-                                        <p>Duis autem vel eum iriure dolor in hendrerit ...</p>
-                                    </a>
-                                </li>
-                                <li class="unread">
-                                    <a href="#" class="clearfix">
-                                        <img src="{% static 'images/users/chat/1.jpg' %}" class="xs-avatar ava-dropdown"
-                                             alt="Avatar">
-                                        <strong>Sandra Kraken</strong><i class="pull-right msg-time">22 minutes
-                                        ago</i><br/>
-                                        <p>Duis autem vel eum iriure dolor in hendrerit ...</p>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="clearfix">
-                                        <img src="{% static 'images/users/chat/3.jpg' %}" class="xs-avatar ava-dropdown"
-                                             alt="Avatar">
-                                        <strong>Zoey Lombardo</strong><i class="pull-right msg-time">41 minutes
-                                        ago</i><br/>
-                                        <p>Duis autem vel eum iriure dolor in hendrerit ...</p>
-                                    </a>
-                                </li>
-                                <li class="dropdown-footer">
-                                    <div class=""><a href="#" class="btn btn-sm btn-block btn-primary"><i
-                                            class="fa fa-share"></i> See all messages</a></div>
-                                </li>
-                            </ul>
-                        </li>
+
                         <li class="dropdown iconify hide-phone"><a href="#" onclick="javascript:toggle_fullscreen()"><i
                                 class="icon-resize-full-2"></i></a></li>
                         <li class="dropdown topbar-profile">
@@ -219,10 +187,10 @@
                             src="{% static 'images/public/ops.bmp' %}"></a>
                 </div>
                 <div class="col-xs-8">
-                    <div class="profile-text">Hi <b>{{ request.user.username }}</b></div>
+                    <div class="profile-text">Hi, <b>{{ request.user.name }}</b></div>
                     <div class="profile-buttons">
-                        <a href="javascript:;"><i class="fa fa-envelope-o pulse"></i></a>
-                        <a href="#connect" class="open-right"><i class="fa fa-comments"></i></a>
+{#                        <a href="javascript:;"><i class="fa fa-envelope-o pulse"></i></a>#}
+{#                        <a href="#connect" class="open-right"><i class="fa fa-comments"></i></a>#}
                         <a href="{% url 'users_logout' %}" title="Sign Out"><i class="fa fa-power-off text-red-1"></i></a>
                     </div>
                 </div>

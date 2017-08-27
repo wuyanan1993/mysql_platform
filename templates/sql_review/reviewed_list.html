@@ -24,8 +24,8 @@
                         <thead>
                         <tr>
                             <th style="text-align: center">ID</th>
-                            <th style="text-align: center">执行用途</th>
                             <th style="text-align: center">提交用户</th>
+                            <th style="text-align: center">执行用途</th>
                             <th style="text-align: center">提交时间</th>
                             <th style="text-align: center">执行时间</th>
                             <th style="text-align: center">SQL</th>
@@ -59,8 +59,8 @@
                             </div>
                             <tr>
                                 <td align="center">{{ list.id }}</td>
-                                <td align="center">{{ list.for_what }}</td>
                                 <td align="center">{{ list.user_name }}</td>
+                                <td align="center">{{ list.for_what }}</td>
                                 <td align="center">{{ list.submit_time | date:'y-m-d H:i' }}</td>
                                 <td align="center">{{ list.execute_time | date:'y-m-d H:i' }}</td>
                                 <td align="center">

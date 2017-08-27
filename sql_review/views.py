@@ -114,6 +114,8 @@ def submit_to_ops(request, record_id):
 
 @login_required(identity=('operation', 'project_manager'))
 def reject_to_dev(request):
+    # 拒绝执行sql
+    
     return HttpResponseRedirect(request, redirect_to='sql_review_reviewed_list')
 
 
@@ -188,7 +190,16 @@ def submitted_list(request):
             page = 1
     except ValueError:
         page = 1
-    record_list = SqlReviewRecord.objects.filter(is_checked=1, is_submitted=1).order_by('-id')
+    if request.user.identity == 'operation':
+        record_list = SqlReviewRecord.objects.filter(user_name=request.user.username, is_checked=1,
+                                                     is_submitted=1).order_by('-id')
+    elif request.user.identity == 'project_manager':
+        record_list = SqlReviewRecord.objects.filter(user_name=request.user.username, is_checked=1,
+                                                     is_submitted=1).order_by('-id')
+    else:
+        record_list = SqlReviewRecord.objects.filter(user_name=request.user.username, is_checked=1,
+                                                     is_submitted=1).order_by('-id')
+
     p = Paginator(record_list, 10, request=request)
     try:
         record_list_in_pages = p.page(page)
@@ -207,6 +218,7 @@ def modify_submitted_sql(request):
     new_sql = request.POST.get('sql', 'select 1')
     new_record = SqlReviewRecord()
     new_record.sql = new_sql
+    new_record.user_name = request.user.username
     new_record.for_what = record.for_what
     new_record.instance = record.instance
     new_record.instance_group = record.instance_group

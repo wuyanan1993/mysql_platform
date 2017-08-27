@@ -46,3 +46,10 @@ class EmailVerifyRecord(models.Model):
     class Meta:
         verbose_name = u'Email验证码'
         verbose_name_plural = verbose_name
+
+
+class MessageRecord(models.Model):
+    send_from = models.ManyToManyField(UserProfile, related_name='send_from_user', verbose_name=u'发送者')
+    send_to = models.ManyToManyField(UserProfile, related_name='send_to_user', verbose_name=u'发送给谁')
+    info = models.TextField(verbose_name=u'信息内容')
+    send_time = models.DateTimeField(default=datetime.now, verbose_name=u'发送时间')
