@@ -74,23 +74,35 @@
                                 </td>
                                 <td align="center">
                                     {% if list.is_checked == 1 %}
-                                        <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: limegreen;"></span>
+                                        <span class="icon-check-1" aria-hidden="true"
+                                              style="color: limegreen;"></span>
                                     {% else %}
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span>
+                                        <span class="icon-cancel-3" aria-hidden="true"
+                                              style="color: red;"></span>
                                     {% endif %}
                                 </td>
                                 <td align="center">
                                     {% if list.is_reviewed == 1 %}
-                                        <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: limegreen;"></span>
+                                        <span class="icon-check-1"
+                                              style="color: limegreen;"></span>
+                                    {% elif list.is_reviewed == 0 %}
+                                        <span class="icon-help-2"
+                                              style="color: darkgray;"></span>
                                     {% else %}
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span>
+                                        <span class="icon-cancel-3"
+                                              style="color: red;"></span>
                                     {% endif %}
                                 </td>
                                 <td align="center">
                                     {% if list.is_executed == 1 %}
-                                        <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color: limegreen;"></span>
+                                        <span class="icon-check-1"
+                                              style="color: limegreen;"></span>
+                                    {% elif list.is_executed == 0 %}
+                                        <span class="icon-help-2"
+                                              style="color: darkgray;"></span>
                                     {% else %}
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red;"></span>
+                                        <span class="icon-cancel-3"
+                                              style="color: red;"></span>
                                     {% endif %}
                                 </td>
                                 <td align="center">{{ list.instance.name }}</td>
@@ -100,7 +112,7 @@
                                         <a href="{% url 'sql_review_sql_review_before_execute' list.id %}" type="button" class="btn btn-default btn-xs">
                                             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Do
                                         </a>
-                                        <a href="{% url 'sql_review_reject_to_dev' list.id %}" type="button" class="btn btn-default btn-xs">
+                                        <a href="{% url 'sql_review_reject_to_dev' %}" type="button" class="btn btn-default btn-xs">
                                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Reject
                                         </a>
                                     {% else %}

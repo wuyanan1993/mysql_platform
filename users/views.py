@@ -15,7 +15,7 @@ from django.contrib.auth.decorators import login_required
 from forms import LoginForm, UserAddForm
 from utils.send_email import send_user_email
 
-from models import UserProfile
+from models import UserProfile, MessageRecord
 
 from utils.log import my_logger
 
@@ -128,3 +128,20 @@ def deal_user_add(request):
             'result_content': '填写内容校验失败，请检查。'
         }
         return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+@login_required()
+def messages(request):
+    message_list = MessageRecord.objects.filter(send_to=request.user.id)
+    message_tmp = {}
+    last_message = []
+    for idx, message in enumerate(message_list):
+        message_tmp['send_from'] = message.send_from.get()
+        message_tmp['info'] = message
+        last_message.append(message_tmp)
+    print(last_message)
+    data = {
+        'sub_module': '7_2',
+        'messages': last_message
+    }
+    return render(request, 'users/message.html', data)

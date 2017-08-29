@@ -15,7 +15,7 @@ from mysql_platform.settings import BACKUP_USER
 from statistics.models import MysqlInstance, MysqlInstanceGroup
 from sql_review.models import SqlReviewRecord, SqlBackupRecord, SpecificationContentForSql, SpecificationTypeForSql
 from sql_review.forms import SqlReviewRecordForm
-from users.models import UserProfile
+from users.models import UserProfile, MessageRecord
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
@@ -115,9 +115,22 @@ def submit_to_ops(request, record_id):
 
 @login_required(identity=('operation', 'project_manager'))
 def reject_to_dev(request):
-    # 拒绝执行sql
-    
-    return HttpResponseRedirect(request, redirect_to='sql_review_reviewed_list')
+    # 拒绝执行sql，将审核状态置为2，写入通知消息到消息系统
+    record = SqlReviewRecord.objects.get(id=request.POST.get('record_id'))
+    record.is_reviewed = 2
+    record.save()
+    from_user = UserProfile.objects.get(id=request.user.id)
+    to_user = UserProfile.objects.get(name=record.user_name)
+    message = MessageRecord()
+    message.info = '项目经理 {} 拒绝了您的sql执行请求，具体原因为：{}'.format(request.user.name, request.POST.get('reject_reason'))
+    message.save()
+    message.send_from.add(from_user)
+    message.send_to.add(to_user)
+    message.save()
+    data = {
+        'status': 'success'
+    }
+    return HttpResponse(json.dumps(data), content_type='application/json')
 
 
 def message_to_review_sql(host, port, sql, option):

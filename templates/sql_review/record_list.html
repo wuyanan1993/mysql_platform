@@ -76,28 +76,34 @@
                                 </td>
                                 <td align="center">
                                     {% if list.is_checked == 1 %}
-                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"
+                                        <span class="icon-check-1" aria-hidden="true"
                                               style="color: limegreen;"></span>
                                     {% else %}
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"
+                                        <span class="icon-cancel-3" aria-hidden="true"
                                               style="color: red;"></span>
                                     {% endif %}
                                 </td>
                                 <td align="center">
                                     {% if list.is_reviewed == 1 %}
-                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"
+                                        <span class="icon-check-1"
                                               style="color: limegreen;"></span>
+                                    {% elif list.is_reviewed == 0 %}
+                                        <span class="icon-help-2"
+                                              style="color: darkgray;"></span>
                                     {% else %}
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"
+                                        <span class="icon-cancel-3"
                                               style="color: red;"></span>
                                     {% endif %}
                                 </td>
                                 <td align="center">
                                     {% if list.is_executed == 1 %}
-                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"
+                                        <span class="icon-check-1"
                                               style="color: limegreen;"></span>
+                                    {% elif list.is_executed == 0 %}
+                                        <span class="icon-help-2"
+                                              style="color: darkgray;"></span>
                                     {% else %}
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"
+                                        <span class="icon-cancel-3"
                                               style="color: red;"></span>
                                     {% endif %}
                                 </td>
@@ -106,12 +112,37 @@
                                 <td align="center">
                                 {#  pm的审核权限，非开发有 #}
                                     {% if request.user.identity != 'developer' %}
+                                        <div class="modal fade" id="{{ list.id }}rejectModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                            <div class="modal-dialog modal-lg" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                                aria-hidden="true">&times;</span></button>
+                                                        <h4 class="modal-title" id="myModalLabel">请填写原因</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                            <label for="inputUsername" class="col-sm-2 control-label">审核失败原因:</label>
+                                                            <div class="col-sm-10" style="display: inline-block;">
+                                                                <input type="text" class="form-control reject_reason"  placeholder="">
+                                                            </div>
+                                                        </div>
+                                                        <div class="clear"></div>
+                                                    </div>
+                                                    <div class="modal-footer">
+
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                        <button class="btn btn-primary save-changes" data-record-id="{{ list.id }}">Save changes</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <a href="{% url 'sql_review_submit_to_ops' list.id %}" type="button"
                                            class="btn btn-default btn-xs">
                                             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Pass
                                         </a>
-                                        <a href="{% url 'sql_review_reject_to_dev' list.id %}" type="button"
-                                           class="btn btn-default btn-xs">
+                                        <a type="button"
+                                           class="btn btn-default btn-xs" data-toggle="modal" data-target="#{{ list.id }}rejectModal">
                                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Reject
                                         </a>
 
@@ -131,6 +162,7 @@
                         {% endfor %}
                         </tbody>
                     </table>
+                    {% csrf_token %}
                     <div class="dataTables_paginate paging_bootstrap pull-right" id="datatables-1_paginate">
                         <ul class="pagination">
                             {% if record_list.has_previous %}
@@ -167,5 +199,31 @@
 {% endblock %}
 {% block js %}
     <script>
+    $('.save-changes').on('click', function () {
+        $(this).attr('disabled', 'disabled');
+        $(this).html('Loading');
+        var reject_reason = $(this).parent().parent().find('.reject_reason').val();
+        var csrf = $('[name="csrfmiddlewaretoken"]').val();
+        var record_id = $(this).attr('data-record-id');
+        $.ajax({
+            type: "POST",
+            url: "{% url 'sql_review_reject_to_dev' %}",
+            data: {
+                'reject_reason': reject_reason,
+                'record_id': record_id
+            },
+            dataType: 'json',
+            beforeSend: function (xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrf);
+            },
+            success: function (data) {
+                if(data.status === 'success'){
+                    location.href = '/sql_review/submitted_list/'
+                }else {
+                    alert('failed')
+                }
+            }
+        });
+    });
     </script>
 {% endblock %}

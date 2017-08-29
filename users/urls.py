@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from views import LoginView, my_logout, test_email, user_add, deal_user_add
+from views import LoginView, my_logout, test_email, user_add, deal_user_add, messages
 
 urlpatterns = [
     url(r'^login/', LoginView.as_view(), name='users_login'),
@@ -23,5 +23,6 @@ urlpatterns = [
     url(r'^test_email/', test_email, name='users_send_email'),
     url(r'^user_add/', user_add, name='users_user_add'),
     url(r'^deal_user_add/', deal_user_add, name='users_deal_user_add'),
+    url(r'^messages/', messages, name='users_messages'),
 
 ]

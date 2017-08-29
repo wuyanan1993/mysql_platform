@@ -1,0 +1,50 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="col-sm-12 portlets">
+
+        <div class="widget">
+            <div class="widget-header transparent">
+                <h2><strong>消息</strong> 列表</h2>
+                <div class="additional-btn">
+                    <a href="#" class="hidden reload"><i class="icon-ccw-1"></i></a>
+                    <a href="#" class="widget-toggle"><i class="icon-down-open-2"></i></a>
+                    <a href="#" class="widget-close"><i class="icon-cancel-3"></i></a>
+                </div>
+            </div>
+            <div class="widget-content padding">
+                <table class="table table-condensed table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>发送者</th>
+                            <th>发送时间</th>
+                            <th>内容</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for message in messages %}
+                            <tr>
+                                <td>{{ message.info.id }}</td>
+                                <td>{{ message.send_from.name }}</td>
+                                <td>{{ message.info.send_time }}</td>
+                                <td>{{ message.info.info }}</td>
+                            </tr>
+                        {% endfor %}
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block heading %}
+    <h1><i class='fa fa-table'></i> 站内消息</h1>
+    <h3>以下为您所接收到的消息</h3>
+{% endblock %}
+
+{% block js %}
+{% endblock %}
