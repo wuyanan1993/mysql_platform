@@ -15,6 +15,7 @@ from mysql_platform.settings import BACKUP_USER
 from statistics.models import MysqlInstance, MysqlInstanceGroup
 from sql_review.models import SqlReviewRecord, SqlBackupRecord, SpecificationContentForSql, SpecificationTypeForSql
 from sql_review.forms import SqlReviewRecordForm
+from users.models import UserProfile
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
@@ -141,11 +142,14 @@ def step(request):
         'content2': content[1],
         'content3': content[2]
     }
+    # 查找出所有项目经理，以供开发选择
+    project_manager = UserProfile.objects.filter(identity='project_manager')
     data = {
         'sub_module': '2_1',
         'instance_groups': instance_groups,
         'start_time': (datetime.now() + timedelta(minutes=30)).strftime('%Y-%m-%d %H:%M'),
-        'dict_content': dict_content
+        'dict_content': dict_content,
+        'project_manager': project_manager
     }
     return render(request, 'sql_review/step.html', data)
 
@@ -153,6 +157,7 @@ def step(request):
 @login_required()
 def submit_step(request):
     sql_review_form = SqlReviewRecordForm(request.POST)
+    print(request.POST)
     if sql_review_form.is_valid():
         result = SqlReviewRecord()
         result.sql = sql_review_form.cleaned_data.get('sql')
@@ -160,7 +165,8 @@ def submit_step(request):
         result.instance = sql_review_form.cleaned_data.get('instance')
         result.instance_group = sql_review_form.cleaned_data.get('instance_group')
         result.execute_time = sql_review_form.cleaned_data.get('execute_time')
-        result.user_name = request.user.username
+        result.user_name = request.user.name
+        result.pm_name = sql_review_form.cleaned_data.get('pm_name')
         result.save()
         data = {
             'result': 'success',
@@ -191,13 +197,13 @@ def submitted_list(request):
     except ValueError:
         page = 1
     if request.user.identity == 'operation':
-        record_list = SqlReviewRecord.objects.filter(user_name=request.user.username, is_checked=1,
+        record_list = SqlReviewRecord.objects.filter(is_checked=1,
                                                      is_submitted=1).order_by('-id')
     elif request.user.identity == 'project_manager':
-        record_list = SqlReviewRecord.objects.filter(user_name=request.user.username, is_checked=1,
+        record_list = SqlReviewRecord.objects.filter(pm_name=request.user.name, is_checked=1,
                                                      is_submitted=1).order_by('-id')
     else:
-        record_list = SqlReviewRecord.objects.filter(user_name=request.user.username, is_checked=1,
+        record_list = SqlReviewRecord.objects.filter(user_name=request.user.name, is_checked=1,
                                                      is_submitted=1).order_by('-id')
 
     p = Paginator(record_list, 10, request=request)
@@ -219,6 +225,7 @@ def modify_submitted_sql(request):
     new_record = SqlReviewRecord()
     new_record.sql = new_sql
     new_record.user_name = request.user.username
+    new_record.pm_name = record.pm_name
     new_record.for_what = record.for_what
     new_record.instance = record.instance
     new_record.instance_group = record.instance_group
@@ -330,7 +337,13 @@ def reviewed_list(request):
             page = 1
     except ValueError:
         page = 1
-    record_list = SqlReviewRecord.objects.filter(is_checked=1, is_reviewed=1).order_by('-id')
+
+    if request.user.identity == 'operation':
+        record_list = SqlReviewRecord.objects.filter(is_checked=1, is_reviewed=1).order_by('-id')
+    elif request.user.identity == 'project_manager':
+        record_list = SqlReviewRecord.objects.filter(pm_name=request.user.name, is_checked=1, is_reviewed=1).order_by('-id')
+    else:
+        record_list = SqlReviewRecord.objects.filter(is_checked=1, is_reviewed=1).order_by('-id')
     p = Paginator(record_list, 10, request=request)
     try:
         record_list_in_pages = p.page(page)

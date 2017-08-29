@@ -372,6 +372,31 @@
                             </li>
                         </ul>
                     </li>
+                    <li class='has_sub'>
+                        <a href='javascript:void(0);'>
+                            <i class='icon-user-3'></i>
+                            <span>用户管理</span>
+                            <span class="pull-right">
+                                <i class="fa fa-angle-down"></i>
+                            </span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a href='{% url "users_user_add" %}' class="{% if sub_module == "7_1" %}
+                                    active
+                                {% endif %}">
+                                    <span>添加用户</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href='{% url "users_user_add" %}' class="{% if sub_module == "7_1" %}
+                                    active
+                                {% endif %}">
+                                    <span>我的消息</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
 

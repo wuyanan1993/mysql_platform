@@ -29,9 +29,19 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                        <label for="inputForWhat">执行目的</label>
-                                        <input type="text" required class="form-control" id="inputForWhat" name="for_what">
-                                    </div>
+                                    <label for="inputProjectManager">选择项目经理</label>
+                                    <select class="form-control" required id="inputProjectManager" name="project_manager">
+                                        <option value="none">-----请选择项目经理------</option>
+                                        {% for manager in project_manager %}
+                                            <option value="{{ manager.name }}">{{ manager.name }}</option>
+                                        {% endfor %}
+
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputForWhat">执行目的</label>
+                                    <input type="text" required class="form-control" id="inputForWhat" name="for_what">
+                                </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="notes">
@@ -127,7 +137,7 @@
     <script src="{% static 'assets/js/pages/form-wizard.js' %}"></script>
     <script src="{% static 'assets/libs/jquery-notifyjs/notify.min.js' %}"></script>
     <script src="{% static 'assets/libs/jquery-notifyjs/styles/metro/notify-metro.js' %}"></script>
-	<script src="{% static 'assets/js/pages/notifications.js' %}"></script>
+    <script src="{% static 'assets/js/pages/notifications.js' %}"></script>
     <script src="{% static 'assets/libs/jquery-icheck/icheck.min.js' %}"></script>
 
     <script type="application/javascript">
@@ -171,6 +181,7 @@
                 var instance_group = $('#selectGroup').val();
                 var instance = $('#inputInstance').val();
                 var for_what = $('#inputForWhat').val();
+                var pm_name = $('#inputProjectManager').val();
                 var execute_time = $('#execute_time').val();
                 var sql = $('#inputSQL').val();
                 var csrf = $('[name="csrfmiddlewaretoken"]').val();
@@ -182,7 +193,8 @@
                         'instance': instance,
                         'for_what': for_what,
                         'execute_time': execute_time,
-                        'sql': sql
+                        'sql': sql,
+                        'pm_name': pm_name
                     },
                     dataType: 'json',
                     beforeSend: function (xhr, settings) {

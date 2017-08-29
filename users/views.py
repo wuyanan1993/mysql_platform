@@ -99,7 +99,7 @@ def test_email(request):
 @login_required()
 def user_add(request):
     data = {
-
+        'sub_module': '7_1'
     }
     return render(request, 'users/user_add.html', data)
 
@@ -118,6 +118,7 @@ def deal_user_add(request):
         user_obj.email = '{}{}'.format(user_add_form.cleaned_data.get('email'), '@voole.com')
         user_obj.identity = user_add_form.cleaned_data.get('identity')
         user_obj.mobile_phone = user_add_form.cleaned_data.get('mobile_phone')
+        user_obj.save()
         data = {
             'result_content': '用户添加成功，相关邮件已发送。'
         }
