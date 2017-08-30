@@ -151,8 +151,8 @@
                                             <span class="glyphicon glyphicon-check" aria-hidden="true"></span> Check
                                         </a>
                                     {% else %}
-                                        <a href="{% url 'sql_review_mail_to_pm' list.id %}" type="button"
-                                           class="btn btn-default btn-xs">
+                                        <a data-record-id="{{ list.id }}" type="button"
+                                           class="btn btn-default btn-xs message_to_pm">
                                             <span class="glyphicon glyphicon-send" aria-hidden="true"></span> 催pm审核
                                         </a>
                                     {% endif %}
@@ -222,6 +222,27 @@
                 }else {
                     alert('failed')
                 }
+            }
+        });
+    });
+    $('.message_to_pm').on('click', function () {
+        $(this).attr('disabled', 'disabled');
+        $(this).html('Loading');
+        var button_obj = $(this);
+        var record_id = $(this).attr('data-record-id');
+        var csrf = $('[name="csrfmiddlewaretoken"]').val();
+        $.ajax({
+            type: "POST",
+            url: "{% url 'sql_review_message_to_pm' %}",
+            data: {
+                'record_id': record_id
+            },
+            dataType: 'json',
+            beforeSend: function (xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrf);
+            },
+            success: function (data) {
+                button_obj.html('已发送');
             }
         });
     });

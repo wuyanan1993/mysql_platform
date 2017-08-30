@@ -122,7 +122,8 @@ def reject_to_dev(request):
     from_user = UserProfile.objects.get(id=request.user.id)
     to_user = UserProfile.objects.get(name=record.user_name)
     message = MessageRecord()
-    message.info = '项目经理 {} 拒绝了您的sql执行请求，具体原因为：{}'.format(request.user.name, request.POST.get('reject_reason'))
+    message.info = '项目经理 {} 拒绝了您的sql（{}）执行请求，具体原因为：{}'.format(request.user.name, record.for_what, request.POST.get('reject_reason'))
+    message.click_path = '/sql_review/submitted_list'
     message.save()
     message.send_from.add(from_user)
     message.send_to.add(to_user)
@@ -607,10 +608,20 @@ def more_specification(request):
     return render(request, 'sql_review/specification.html', data)
 
 
-def mail_to_pm(request, record_id):
+def message_to_pm(request):
     # 给对应项目经理发邮件，以及站内信通知其审核sql
-    return 's'
+    record = SqlReviewRecord.objects.get(id=request.POST.get('record_id'))
+    from_user = UserProfile.objects.get(id=request.user.id)
+    to_user = UserProfile.objects.get(name=record.pm_name)
+    message = MessageRecord()
+    message.info = '开发 {} 希望您能尽快审核该sql（{}）'.format(request.user.name, record.for_what)
+    message.click_path = '/sql_review/submitted_list'
+    message.save()
+    message.send_from.add(from_user)
+    message.send_to.add(to_user)
+    message.save()
+    return HttpResponse(json.dumps({'status': 'failed'}), content_type='application/json')
 
 
-def mail_to_oper(request, record_id):
+def message_to_oper(request, record_id):
     return 's'

@@ -17,13 +17,13 @@ from django.conf.urls import url
 from sql_review.views import review, step, submit_step, instance_by_ajax_and_id, submitted_list, modify_submitted_sql
 from sql_review.views import sql_execute, finished_list, rollback, reviewed_list, ajax_rollback_by_sequence, \
     submit_to_pm, submit_to_ops, reject_to_dev, sql_review_before_execute, osc_process, ajax_osc_percent, \
-    pm_review, more_specification, mail_to_pm, mail_to_oper
+    pm_review, more_specification, message_to_pm, message_to_oper
 
 urlpatterns = [
     url(r'^review_result/(?P<record_id>[0-9]+)/', review, name='sql_review_review_result'),
     url(r'^pm_review_result/(?P<record_id>[0-9]+)/', pm_review, name='sql_review_pm_review_result'),
-    url(r'^mail_to_pm/(?P<record_id>[0-9]+)/', mail_to_pm, name='sql_review_mail_to_pm'),
-    url(r'^mail_to_oper/(?P<record_id>[0-9]+)/', mail_to_oper, name='sql_review_mail_to_oper'),
+    url(r'^message_to_pm/', message_to_pm, name='sql_review_message_to_pm'),
+    url(r'^message_to_oper/(?P<record_id>[0-9]+)/', message_to_oper, name='sql_review_message_to_oper'),
     url(r'^submit_to_pm/', submit_to_pm, name='sql_review_submit_to_pm'),
     url(r'^submit_to_ops/(?P<record_id>[0-9]+)/', submit_to_ops, name='sql_review_submit_to_ops'),
     url(r'^reject_to_dev/', reject_to_dev, name='sql_review_reject_to_dev'),

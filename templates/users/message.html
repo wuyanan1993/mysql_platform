@@ -23,12 +23,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for message in messages %}
+                        {% for message in messages.object_list %}
                             <tr>
                                 <td>{{ message.info.id }}</td>
                                 <td>{{ message.send_from.name }}</td>
-                                <td>{{ message.info.send_time }}</td>
-                                <td>{{ message.info.info }}</td>
+                                <td>{{ message.info.send_time | date:'y-m-d H:i' }}</td>
+                                <td>{{ message.info.info }}{% autoescape off %} <a href="{{ message.info.click_path }}">点击查看详细。</a> {% endautoescape %}</td>
                             </tr>
                         {% endfor %}
 

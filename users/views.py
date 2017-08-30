@@ -11,6 +11,9 @@ from django.contrib.auth.hashers import make_password
 from django.db.models import Q
 from django.views import View
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
+from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
+
 
 from forms import LoginForm, UserAddForm
 from utils.send_email import send_user_email
@@ -132,16 +135,33 @@ def deal_user_add(request):
 
 @login_required()
 def messages(request):
+    try:
+        page = int(request.GET.get('page', 1))
+        if page < 1:
+            page = 1
+    except ValueError:
+        page = 1
     message_list = MessageRecord.objects.filter(send_to=request.user.id)
-    message_tmp = {}
     last_message = []
     for idx, message in enumerate(message_list):
+        message_tmp = {}
         message_tmp['send_from'] = message.send_from.get()
         message_tmp['info'] = message
+        print(message.id)
         last_message.append(message_tmp)
-    print(last_message)
+    p = Paginator(last_message, 10, request=request)
+    try:
+        record_list_in_pages = p.page(page)
+    except EmptyPage:
+        record_list_in_pages = p.page(1)
     data = {
         'sub_module': '7_2',
-        'messages': last_message
+        'messages': record_list_in_pages
     }
     return render(request, 'users/message.html', data)
+
+
+@login_required()
+def new_message_by_ajax(request):
+    message_list = MessageRecord.objects.filter(send_to=request.user.id, is_read=0)[0:5]
+    return HttpResponse(serializers.serialize("json", message_list), content_type='application/json')

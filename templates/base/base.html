@@ -76,51 +76,15 @@
                     <ul class="nav navbar-nav navbar-right top-navbar">
                         <li class="dropdown iconify hide-phone">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-bell-2"></i><span
-                                    class="label label-danger absolute">5</span></a>
+                                    class="label label-danger absolute number_of_unread">...</span></a>
                             <ul class="dropdown-menu dropdown-message">
-                                <li class="dropdown-header notif-header"><i class="icon-bell-2">
+                                <li class="dropdown-header notif-header message-header"><i class="icon-bell-2">
 
                                 </i>新通知
                                 </li>
                                 <li class="unread">
                                     <a href="#">
-                                        <p><strong>吴亚楠</strong> 执行了相应的sql
-                                            <strong>&#34;for test&#34;</strong>
-                                            <br/><i>2 分钟前</i>
-                                        </p>
-                                    </a>
-                                </li>
-                                <li class="unread">
-                                    <a href="#">
-                                        <p><strong>John Doe</strong> Created an photo album
-                                            <strong>&#34;Fappening&#34;</strong>
-                                            <br/><i>8 minutes ago</i>
-                                        </p>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <p><strong>John Malkovich</strong> Added 3 products
-                                            <br/><i>3 hours ago</i>
-                                        </p>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <p><strong>Sonata Arctica</strong> Send you a message <strong>&#34;Lorem ipsum
-                                            dolor...Lorem ipsum
-                                            dolor...Lorem ipsum
-                                            dolor...Lorem ipsum
-                                            dolor...Lorem ipsum
-                                            dolor...&#34;</strong>
-                                            <br/><i>12 hours ago</i>
-                                        </p>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <p><strong>Johnny Depp</strong> Updated his avatar
-                                            <br/><i>Yesterday</i>
+                                        <p><strong>loading</strong>
                                         </p>
                                     </a>
                                 </li>
@@ -500,6 +464,29 @@
 <script src="{% static 'assets/js/init.js' %}"></script>
 <script>
 
+</script>
+<script>
+    var timer = setInterval(function(){
+        $.ajax({
+            type: "GET",
+            url: "{% url 'users_new_message_by_ajax' %}",
+            dataType: 'json',
+            success: function (data) {
+                $('.unread').remove();
+                $('.number_of_unread').html(data.length);
+                $.each(data, function(key,value){
+                    var node = $("<li class=\"unread\">\n" +
+                        "                                    <a href='"+value.fields.click_path+"'>\n" +
+                        "                                        <p><strong>"+value.fields.info+"</strong> \n" +
+                        "                                            <br/><i>"+ value.fields.send_time +"</i>\n" +
+                        "                                        </p>\n" +
+                        "                                    </a>\n" +
+                        "                                </li>");
+                    $('.message-header').after(node)
+                })
+            }
+        });
+    }, 3000)
 </script>
 {% block js %}
 

@@ -53,3 +53,5 @@ class MessageRecord(models.Model):
     send_to = models.ManyToManyField(UserProfile, related_name='send_to_user', verbose_name=u'发送给谁')
     info = models.TextField(verbose_name=u'信息内容')
     send_time = models.DateTimeField(default=datetime.now, verbose_name=u'发送时间')
+    is_read = models.IntegerField(default=0, null=False, verbose_name=u'未读状态')
+    click_path = models.CharField(max_length=100, default='/', verbose_name=u'跳转路径')
