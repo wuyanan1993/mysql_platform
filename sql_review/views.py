@@ -117,17 +117,29 @@ def submit_to_ops(request, record_id):
 def reject_to_dev(request):
     # 拒绝执行sql，将审核状态置为2，写入通知消息到消息系统
     record = SqlReviewRecord.objects.get(id=request.POST.get('record_id'))
-    record.is_reviewed = 2
+    if request.user.identity == 'project_manager':
+        record.is_reviewed = 2
+    else:
+        record.is_executed = 2
     record.save()
     from_user = UserProfile.objects.get(id=request.user.id)
     to_user = UserProfile.objects.get(name=record.user_name)
-    message = MessageRecord()
-    message.info = '项目经理 {} 拒绝了您的sql（{}）执行请求，具体原因为：{}'.format(request.user.name, record.for_what, request.POST.get('reject_reason'))
-    message.click_path = '/sql_review/submitted_list'
-    message.save()
-    message.send_from.add(from_user)
-    message.send_to.add(to_user)
-    message.save()
+    dev_message = MessageRecord()
+    dev_message.info = '{} 拒绝了您的sql（{}）执行请求，具体原因为：{}'.format(request.user.name, record.for_what, request.POST.get('reject_reason'))
+    dev_message.click_path = '/sql_review/submitted_list'
+    dev_message.save()
+    dev_message.send_from.add(from_user)
+    dev_message.send_to.add(to_user)
+    dev_message.save()
+    if request.user.identity == 'operation':
+        to_user = UserProfile.objects.get(name=record.pm_name)
+        pm_message = MessageRecord()
+        pm_message.info = '{} 拒绝了您的sql（{}）执行请求，具体原因为：{}'.format(request.user.name, record.for_what, request.POST.get('reject_reason'))
+        pm_message.click_path = '/sql_review/submitted_list'
+        pm_message.save()
+        pm_message.send_from.add(from_user)
+        pm_message.send_to.add(to_user)
+        pm_message.save()
     data = {
         'status': 'success'
     }
@@ -614,14 +626,26 @@ def message_to_pm(request):
     from_user = UserProfile.objects.get(id=request.user.id)
     to_user = UserProfile.objects.get(name=record.pm_name)
     message = MessageRecord()
-    message.info = '开发 {} 希望您能尽快审核该sql（{}）'.format(request.user.name, record.for_what)
+    message.info = '{} 希望您能尽快审核该sql（{}）'.format(request.user.name, record.for_what)
     message.click_path = '/sql_review/submitted_list'
     message.save()
     message.send_from.add(from_user)
     message.send_to.add(to_user)
     message.save()
-    return HttpResponse(json.dumps({'status': 'failed'}), content_type='application/json')
+    return HttpResponse(json.dumps({'status': 'success'}), content_type='application/json')
 
 
-def message_to_oper(request, record_id):
-    return 's'
+def message_to_oper(request):
+    # 发送给所有的运维
+    record = SqlReviewRecord.objects.get(id=request.POST.get('record_id'))
+    from_user = UserProfile.objects.get(id=request.user.id)
+    to_users = UserProfile.objects.filter(identity='operation')
+    for user in to_users:
+        message = MessageRecord()
+        message.info = '{} 希望您能尽快执行该sql（{}）'.format(request.user.name, record.for_what)
+        message.click_path = '/sql_review/reviewed_list'
+        message.save()
+        message.send_from.add(from_user)
+        message.send_to.add(user)
+        message.save()
+    return HttpResponse(json.dumps({'status': 'success'}), content_type='application/json')

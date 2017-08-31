@@ -141,7 +141,7 @@ def messages(request):
             page = 1
     except ValueError:
         page = 1
-    message_list = MessageRecord.objects.filter(send_to=request.user.id)
+    message_list = MessageRecord.objects.filter(send_to=request.user.id).order_by('-id')
     last_message = []
     for idx, message in enumerate(message_list):
         message_tmp = {}
@@ -149,7 +149,7 @@ def messages(request):
         message_tmp['info'] = message
         print(message.id)
         last_message.append(message_tmp)
-    p = Paginator(last_message, 10, request=request)
+    p = Paginator(last_message, 15, request=request)
     try:
         record_list_in_pages = p.page(page)
     except EmptyPage:
@@ -163,5 +163,14 @@ def messages(request):
 
 @login_required()
 def new_message_by_ajax(request):
-    message_list = MessageRecord.objects.filter(send_to=request.user.id, is_read=0)[0:5]
+    message_list = MessageRecord.objects.filter(send_to=request.user.id, is_read=0).order_by('-id')[0:5]
     return HttpResponse(serializers.serialize("json", message_list), content_type='application/json')
+
+
+@login_required()
+def clear_unread_message_by_ajax(request):
+    updated_message_number = MessageRecord.objects.filter(send_to=request.user.id, is_read=0).update(is_read=1)
+    data = {
+        'updated_message_number': updated_message_number
+    }
+    return HttpResponse(json.dumps(data), content_type='application/json')

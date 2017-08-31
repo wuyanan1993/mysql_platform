@@ -78,7 +78,7 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-bell-2"></i><span
                                     class="label label-danger absolute number_of_unread">...</span></a>
                             <ul class="dropdown-menu dropdown-message">
-                                <li class="dropdown-header notif-header message-header"><i class="icon-bell-2">
+                                <li class="dropdown-header notif-header "><i class="icon-bell-2">
 
                                 </i>新通知
                                 </li>
@@ -88,18 +88,14 @@
                                         </p>
                                     </a>
                                 </li>
-                                <li class="dropdown-footer">
+                                <li class="dropdown-footer message-footer">
                                     <div class="btn-group btn-group-justified">
                                         <div class="btn-group">
-                                            <a href="#" class="btn btn-sm btn-primary"><i class="icon-ccw-1"></i>
-                                                Refresh</a>
-                                        </div>
-                                        <div class="btn-group">
-                                            <a href="#" class="btn btn-sm btn-danger"><i class="icon-trash-3"></i> Clear
+                                            <a class="btn btn-sm btn-danger clear-all"><i class="icon-trash-3"></i> Clear
                                                 All</a>
                                         </div>
                                         <div class="btn-group">
-                                            <a href="#" class="btn btn-sm btn-success">See All <i
+                                            <a href="{% url 'users_messages' %}" class="btn btn-sm btn-success">See All <i
                                                     class="icon-right-open-2"></i></a>
                                         </div>
                                     </div>
@@ -466,6 +462,7 @@
 
 </script>
 <script>
+{#    定时获取未读消息#}
     var timer = setInterval(function(){
         $.ajax({
             type: "GET",
@@ -473,20 +470,43 @@
             dataType: 'json',
             success: function (data) {
                 $('.unread').remove();
-                $('.number_of_unread').html(data.length);
-                $.each(data, function(key,value){
-                    var node = $("<li class=\"unread\">\n" +
-                        "                                    <a href='"+value.fields.click_path+"'>\n" +
-                        "                                        <p><strong>"+value.fields.info+"</strong> \n" +
-                        "                                            <br/><i>"+ value.fields.send_time +"</i>\n" +
+                if(data.length === 0){
+                    $('.number_of_unread').removeClass('label-danger').html('');
+                    var empty_node = $("<li class=\"unread\">\n" +
+                        "                                    <a href=\"#\">\n" +
+                        "                                        <p><strong>暂时没有未读消息</strong>\n" +
                         "                                        </p>\n" +
                         "                                    </a>\n" +
                         "                                </li>");
-                    $('.message-header').after(node)
-                })
+                    $('.message-footer').before(empty_node)
+                }else{
+                    $('.number_of_unread').addClass('label-danger').html(data.length);
+                    $.each(data, function(key,value){
+                        var node = $("<li class=\"unread\">\n" +
+                            "                                    <a href='"+value.fields.click_path+"'>\n" +
+                            "                                        <p><strong>"+value.fields.info+"</strong> \n" +
+                            "                                            <br/><i>"+ value.fields.send_time +"</i>\n" +
+                            "                                        </p>\n" +
+                            "                                    </a>\n" +
+                            "                                </li>");
+                        $('.message-footer').before(node)
+                    })
+                }
             }
         });
-    }, 3000)
+    }, 3000);
+{#    清除未读消息按钮#}
+    $('.clear-all').on('click', function(){
+        $.ajax({
+            type: "GET",
+            url: "{% url 'users_clear_unread_message_by_ajax' %}",
+            dataType: 'json',
+            success: function (data) {
+                alert("已将" + data.updated_message_number + "条未读消息置为已读状态")
+            }
+        });
+        return false;
+    })
 </script>
 {% block js %}
 

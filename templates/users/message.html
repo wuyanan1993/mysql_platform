@@ -35,6 +35,33 @@
 
                     </tbody>
                 </table>
+                <div class="dataTables_paginate paging_bootstrap pull-right" id="datatables-1_paginate">
+                    <ul class="pagination">
+                        {% if messages.has_previous %}
+                            <li ><a href="?{{ messages.previous_page_number.querystring }}">上一页</a>
+                            </li>
+                        {% else %}
+                            <li class="prev disabled"><a>首页</a>
+                            </li>
+                        {% endif %}
+                        {% for page in messages.pages %}
+                            {% if page %}
+                                {% ifequal page messages.number %}
+                                    <li class="active"><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                                {% else %}
+                                    <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
+                                {% endifequal %}
+                            {% else %}
+                                <li ><a href="">...</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if messages.has_next %}
+                            <li ><a href="?{{ messages.next_page_number.querystring }}">下一页</a></li>
+                        {% else %}
+                            <li class="prev disabled"><a>尾页</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
         </div>
 

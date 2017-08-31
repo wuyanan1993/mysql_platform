@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from views import LoginView, my_logout, test_email, user_add, deal_user_add, messages, new_message_by_ajax
+from views import clear_unread_message_by_ajax
 
 urlpatterns = [
     url(r'^login/', LoginView.as_view(), name='users_login'),
@@ -25,5 +26,6 @@ urlpatterns = [
     url(r'^deal_user_add/', deal_user_add, name='users_deal_user_add'),
     url(r'^messages/', messages, name='users_messages'),
     url(r'^new_message_by_ajax/', new_message_by_ajax, name='users_new_message_by_ajax'),
+    url(r'^clear_unread_message_by_ajax/', clear_unread_message_by_ajax, name='users_clear_unread_message_by_ajax'),
 
 ]

@@ -109,21 +109,47 @@
                                 <td align="center">{{ list.instance_group.name }}</td>
                                 <td align="center">
                                     {% if request.user.identity != 'project_manager' %}
+                                        <div class="modal fade" id="{{ list.id }}rejectModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                            <div class="modal-dialog modal-lg" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                                aria-hidden="true">&times;</span></button>
+                                                        <h4 class="modal-title" id="myModalLabel">请填写原因</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                            <label for="inputUsername" class="col-sm-2 control-label">取消执行原因:</label>
+                                                            <div class="col-sm-10" style="display: inline-block;">
+                                                                <input type="text" class="form-control reject_reason"  placeholder="">
+                                                            </div>
+                                                        </div>
+                                                        <div class="clear"></div>
+                                                    </div>
+                                                    <div class="modal-footer">
+
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                        <button class="btn btn-primary save-changes" data-record-id="{{ list.id }}">Save changes</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <a href="{% url 'sql_review_sql_review_before_execute' list.id %}" type="button" class="btn btn-default btn-xs">
-                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Do
+                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Execute
                                         </a>
-                                        <a href="{% url 'sql_review_reject_to_dev' %}" type="button" class="btn btn-default btn-xs">
+                                        <a type="button" class="btn btn-default btn-xs " data-toggle="modal" data-target="#{{ list.id }}rejectModal">
                                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Reject
                                         </a>
                                     {% else %}
-                                        <a href="{% url 'sql_review_mail_to_oper' list.id %}" type="button"
-                                           class="btn btn-default btn-xs">
+                                        <a data-record-id="{{ list.id }}" type="button"
+                                           class="btn btn-default btn-xs message_to_oper">
                                             <span class="glyphicon glyphicon-send" aria-hidden="true"></span> 催oper执行
                                         </a>
                                     {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
+                        {% csrf_token %}
                         </tbody>
                     </table>
                     <div class="dataTables_paginate paging_bootstrap pull-right" id="datatables-1_paginate">
@@ -162,5 +188,52 @@
 {% endblock %}
 {% block js %}
     <script>
+        $('.save-changes').on('click', function () {
+            $(this).attr('disabled', 'disabled');
+            $(this).html('Loading');
+            var reject_reason = $(this).parent().parent().find('.reject_reason').val();
+            var csrf = $('[name="csrfmiddlewaretoken"]').val();
+            var record_id = $(this).attr('data-record-id');
+            $.ajax({
+                type: "POST",
+                url: "{% url 'sql_review_reject_to_dev' %}",
+                data: {
+                    'reject_reason': reject_reason,
+                    'record_id': record_id
+                },
+                dataType: 'json',
+                beforeSend: function (xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf);
+                },
+                success: function (data) {
+                    if(data.status === 'success'){
+                        location.href = '/sql_review/submitted_list/'
+                    }else {
+                        alert('failed')
+                    }
+                }
+            });
+        });
+        $('.message_to_oper').on('click', function () {
+            $(this).attr('disabled', 'disabled');
+            $(this).html('Loading');
+            var button_obj = $(this);
+            var record_id = $(this).attr('data-record-id');
+            var csrf = $('[name="csrfmiddlewaretoken"]').val();
+            $.ajax({
+                type: "POST",
+                url: "{% url 'sql_review_message_to_oper' %}",
+                data: {
+                    'record_id': record_id
+                },
+                dataType: 'json',
+                beforeSend: function (xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf);
+                },
+                success: function (data) {
+                    button_obj.html('已发送');
+                }
+            });
+        });
     </script>
 {% endblock %}
