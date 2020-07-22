@@ -25,8 +25,8 @@ class MysqlInstanceGroup(models.Model):
 
 class MysqlInstance(models.Model):
     CHARACTER_CHOICES = (
-        ('master', 'master'),
-        ('slave', 'slave'),
+        ('main', 'main'),
+        ('subordinate', 'subordinate'),
     )
     name = models.CharField(max_length=20, null=False, blank=False, verbose_name=u'实例名称')
     group = models.ForeignKey(MysqlInstanceGroup, verbose_name=u'实例组名称')
@@ -48,14 +48,14 @@ class MysqlInstance(models.Model):
 
 
 class InstanceRelation(models.Model):
-    master_instance = models.ForeignKey(MysqlInstance, related_name='master_instance_id',
+    main_instance = models.ForeignKey(MysqlInstance, related_name='main_instance_id',
                                         blank=False, verbose_name=u'主id')
-    slave_instance = models.ForeignKey(MysqlInstance, related_name='slave_instance_id',
+    subordinate_instance = models.ForeignKey(MysqlInstance, related_name='subordinate_instance_id',
                                        blank=False, verbose_name=u'从id')
     belong_group = models.ForeignKey(MysqlInstanceGroup, blank=False, default=1, verbose_name=u'Mysql 组')
 
     def __str__(self):
-        return '{} ==> {}  ({})'.format(self.master_instance, self.slave_instance, self.belong_group)
+        return '{} ==> {}  ({})'.format(self.main_instance, self.subordinate_instance, self.belong_group)
 
     class Meta:
         verbose_name = u'Mysql 主从关系'
