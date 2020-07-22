@@ -65,13 +65,13 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='instancerelation',
-            name='master_instance',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='master_instance_id', to='statistics.MysqlInstance', verbose_name='\u4e3bid'),
+            name='main_instance',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='main_instance_id', to='statistics.MysqlInstance', verbose_name='\u4e3bid'),
         ),
         migrations.AddField(
             model_name='instancerelation',
-            name='slave_instance',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='slave_instance_id', to='statistics.MysqlInstance', verbose_name='\u4eceid'),
+            name='subordinate_instance',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='subordinate_instance_id', to='statistics.MysqlInstance', verbose_name='\u4eceid'),
         ),
         migrations.AlterUniqueTogether(
             name='mysqlinstance',
